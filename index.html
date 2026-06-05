@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>O Coronel — Sistema de Gestão</title>
+<title>O Coronel — Sistema de Gestão v2</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -15,17 +15,17 @@
   --red:#E74C3C;--red-dim:rgba(231,76,60,0.12);
   --blue:#3498DB;--blue-dim:rgba(52,152,219,0.12);
   --orange:#F39C12;--orange-dim:rgba(243,156,18,0.12);
-  --border:#242424;--radius:12px;
-  --sidebar:240px;
+  --purple:#9B59B6;--purple-dim:rgba(155,89,182,0.12);
+  --border:#242424;--radius:12px;--sidebar:240px;
   --t:0.2s cubic-bezier(.4,0,.2,1);
 }
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow:hidden}
 #app{display:flex;height:100vh}
 
-/* ===== SIDEBAR ===== */
+/* SIDEBAR */
 .sidebar{width:var(--sidebar);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
 .sidebar-logo{padding:1.5rem 1.25rem 1rem;border-bottom:1px solid var(--border)}
-.logo-mark{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;letter-spacing:0.04em;color:var(--gold);line-height:1}
+.logo-mark{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;letter-spacing:0.04em;color:var(--gold)}
 .logo-sub{font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--text3);margin-top:3px}
 .sidebar-caixa{margin:1rem 0.75rem;background:var(--gold-dim);border:1px solid rgba(201,168,76,0.25);border-radius:var(--radius);padding:0.85rem 1rem}
 .caixa-label{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-d);margin-bottom:4px}
@@ -35,19 +35,20 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .caixa-dot.closed{background:var(--red)}
 nav{flex:1;padding:0.5rem 0.75rem;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
 nav::-webkit-scrollbar{display:none}
-.nav-item{display:flex;align-items:center;gap:10px;padding:0.65rem 0.85rem;border-radius:9px;cursor:pointer;transition:all var(--t);font-size:0.85rem;font-weight:500;color:var(--text2);border:1px solid transparent}
+.nav-item{display:flex;align-items:center;gap:10px;padding:0.65rem 0.85rem;border-radius:9px;cursor:pointer;transition:all var(--t);font-size:0.85rem;font-weight:500;color:var(--text2);border:1px solid transparent;position:relative}
 .nav-item:hover{background:var(--bg3);color:var(--text)}
 .nav-item.active{background:var(--gold-dim);border-color:rgba(201,168,76,0.2);color:var(--gold)}
 .nav-item svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.nav-badge{position:absolute;right:10px;background:var(--red);color:#fff;border-radius:10px;font-size:0.6rem;font-weight:700;padding:1px 6px;min-width:18px;text-align:center}
 .nav-sep{height:1px;background:var(--border);margin:0.5rem 0}
 .nav-label{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text3);padding:0.25rem 0.85rem;margin-top:0.25rem}
 .sidebar-bottom{padding:0.75rem;border-top:1px solid var(--border)}
 .date-display{font-size:0.78rem;color:var(--text3);text-align:center}
 
-/* ===== MAIN ===== */
-.main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
 .topbar{height:56px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;flex-shrink:0;background:var(--bg2)}
-.topbar-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--text)}
+.topbar-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700}
 .topbar-actions{display:flex;gap:0.5rem;align-items:center}
 .tb-btn{height:34px;padding:0 1rem;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:0.8rem;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all var(--t)}
 .tb-btn:hover{border-color:var(--gold-d);color:var(--text)}
@@ -56,21 +57,18 @@ nav::-webkit-scrollbar{display:none}
 .tb-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .content{flex:1;overflow-y:auto;padding:1.5rem}
 .content::-webkit-scrollbar{width:4px}
-.content::-webkit-scrollbar-track{background:transparent}
 .content::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 
-/* ===== PANELS ===== */
-.panel{display:none}
-.panel.active{display:block}
-
-/* ===== CARDS / GRID ===== */
+/* STATS */
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+.stats-row.cols3{grid-template-columns:repeat(3,1fr)}
 .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem 1.25rem;position:relative;overflow:hidden}
 .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
 .stat-card.green::before{background:var(--green)}
 .stat-card.gold::before{background:var(--gold)}
 .stat-card.red::before{background:var(--red)}
 .stat-card.blue::before{background:var(--blue)}
+.stat-card.purple::before{background:var(--purple)}
 .sc-label{font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3);margin-bottom:0.4rem}
 .sc-val{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:var(--text);line-height:1}
 .sc-sub{font-size:0.75rem;color:var(--text2);margin-top:0.3rem}
@@ -80,13 +78,13 @@ nav::-webkit-scrollbar{display:none}
 .sc-icon.gold{background:var(--gold-dim);color:var(--gold)}
 .sc-icon.red{background:var(--red-dim);color:var(--red)}
 .sc-icon.blue{background:var(--blue-dim);color:var(--blue)}
+.sc-icon.purple{background:var(--purple-dim);color:var(--purple)}
 
-/* GRID 2 COL */
+/* GRID */
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
 .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1rem}
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem}
 .card-title{font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between}
-.card-title-actions{display:flex;gap:0.5rem}
 
 /* TABLE */
 .table-wrap{overflow-x:auto}
@@ -96,20 +94,23 @@ td{font-size:0.85rem;color:var(--text);padding:0.7rem 0.85rem;border-bottom:1px 
 tr:last-child td{border-bottom:none}
 tr:hover td{background:rgba(255,255,255,0.02)}
 .td-gold{color:var(--gold);font-weight:600;font-family:'Playfair Display',serif}
+.td-green{color:var(--green);font-weight:600}
 .badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:0.7rem;font-weight:600}
 .badge.green{background:var(--green-dim);color:var(--green)}
 .badge.red{background:var(--red-dim);color:var(--red)}
 .badge.gold{background:var(--gold-dim);color:var(--gold)}
 .badge.blue{background:var(--blue-dim);color:var(--blue)}
 .badge.orange{background:var(--orange-dim);color:var(--orange)}
-
-/* ACTIONS */
+.badge.purple{background:var(--purple-dim);color:var(--purple)}
 .row-actions{display:flex;gap:0.4rem}
 .row-btn{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all var(--t)}
 .row-btn:hover{border-color:var(--gold-d)}
 .row-btn svg{width:13px;height:13px;stroke:var(--text2);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .row-btn.danger:hover{border-color:var(--red);background:var(--red-dim)}
 .row-btn.danger:hover svg{stroke:var(--red)}
+.row-btn.success{border-color:rgba(46,204,113,0.3)}
+.row-btn.success:hover{background:var(--green-dim)}
+.row-btn.success svg,.row-btn.success:hover svg{stroke:var(--green)}
 
 /* FORMS */
 .form-grid{display:grid;gap:0.85rem}
@@ -125,7 +126,7 @@ textarea{resize:vertical;min-height:80px}
 
 /* PDV */
 .pdv-layout{display:grid;grid-template-columns:1fr 380px;gap:1rem;height:calc(100vh - 56px - 3rem);overflow:hidden}
-.pdv-items{overflow-y:auto;padding-right:0.5rem}
+.pdv-items{overflow-y:auto}
 .pdv-items::-webkit-scrollbar{display:none}
 .pdv-right{display:flex;flex-direction:column;gap:0.75rem;overflow:hidden}
 .pdv-cart{flex:1;overflow-y:auto;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem}
@@ -134,97 +135,114 @@ textarea{resize:vertical;min-height:80px}
 .item-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:0.85rem;cursor:pointer;transition:all var(--t);text-align:center}
 .item-card:hover{border-color:var(--gold-d);background:var(--bg3)}
 .item-card:active{transform:scale(0.97)}
-.item-icon{font-size:1.5rem;margin-bottom:0.4rem}
-.item-name{font-size:0.78rem;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:0.3rem}
-.item-price{font-family:'Playfair Display',serif;font-size:0.95rem;color:var(--gold)}
-.cart-item{display:flex;align-items:center;justify-content:space-between;padding:0.6rem 0;border-bottom:1px solid var(--border)}
+.item-icon{font-size:1.4rem;margin-bottom:0.35rem}
+.item-name{font-size:0.75rem;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:0.25rem}
+.item-price{font-family:'Playfair Display',serif;font-size:0.9rem;color:var(--gold)}
+.cart-item{display:flex;align-items:center;justify-content:space-between;padding:0.55rem 0;border-bottom:1px solid var(--border)}
 .cart-item:last-child{border:none}
-.ci-name{font-size:0.82rem;font-weight:500;color:var(--text);flex:1}
-.ci-qty{display:flex;align-items:center;gap:6px;margin:0 0.75rem}
-.qty-btn{width:22px;height:22px;border-radius:5px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:0.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--t)}
+.ci-name{font-size:0.8rem;font-weight:500;color:var(--text);flex:1;line-height:1.3}
+.ci-qty{display:flex;align-items:center;gap:5px;margin:0 0.6rem}
+.qty-btn{width:20px;height:20px;border-radius:5px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.85rem;transition:all var(--t)}
 .qty-btn:hover{border-color:var(--gold-d);color:var(--gold)}
-.ci-price{font-family:'Playfair Display',serif;font-size:0.9rem;color:var(--gold);flex-shrink:0}
+.ci-price{font-family:'Playfair Display',serif;font-size:0.88rem;color:var(--gold);flex-shrink:0}
 .cart-total{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem}
-.total-row{display:flex;justify-content:space-between;font-size:0.82rem;color:var(--text2);margin-bottom:0.4rem}
-.total-final{display:flex;justify-content:space-between;align-items:center;margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--border)}
-.total-label{font-size:0.85rem;font-weight:600;color:var(--text)}
-.total-val{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--gold)}
-.pgto-btns{display:grid;grid-template-columns:repeat(4,1fr);gap:0.4rem;margin-top:0.75rem}
-.pgto-btn{height:38px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:0.75rem;font-weight:500;cursor:pointer;transition:all var(--t)}
+.total-final{display:flex;justify-content:space-between;align-items:center;margin-top:0.65rem;padding-top:0.65rem;border-top:1px solid var(--border)}
+.total-label{font-size:0.85rem;font-weight:600}
+.total-val{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--gold)}
+.pgto-btns{display:grid;grid-template-columns:repeat(4,1fr);gap:0.4rem;margin-top:0.65rem}
+.pgto-btn{height:36px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:500;cursor:pointer;transition:all var(--t)}
 .pgto-btn:hover,.pgto-btn.active{border-color:var(--gold);color:var(--gold);background:var(--gold-dim)}
-.btn-cobrar{width:100%;height:46px;background:var(--gold);border:none;border-radius:var(--radius);color:#0D0D0D;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all var(--t);margin-top:0.5rem;letter-spacing:0.05em}
+.btn-cobrar{width:100%;height:44px;background:var(--gold);border:none;border-radius:var(--radius);color:#0D0D0D;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;transition:all var(--t);margin-top:0.5rem;letter-spacing:0.05em}
 .btn-cobrar:hover{background:var(--gold-l)}
-.btn-cobrar:active{transform:scale(0.98)}
 .btn-cobrar:disabled{opacity:0.4;cursor:not-allowed}
-
-/* PDV FILTER TABS */
-.pdv-tabs{display:flex;gap:0.4rem;margin-bottom:0.85rem;flex-wrap:wrap}
-.pdv-tab{height:32px;padding:0 1rem;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:0.78rem;cursor:pointer;transition:all var(--t)}
+.pdv-tabs{display:flex;gap:0.4rem;margin-bottom:0.75rem;flex-wrap:wrap}
+.pdv-tab{height:30px;padding:0 0.85rem;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:0.75rem;cursor:pointer;transition:all var(--t)}
 .pdv-tab.active{background:var(--gold-dim);border-color:rgba(201,168,76,0.3);color:var(--gold)}
 
-/* MODAL */
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity var(--t)}
-.modal-backdrop.open{opacity:1;pointer-events:all}
-.modal{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:1.5rem;width:100%;max-width:480px;transform:scale(0.95);transition:transform var(--t);max-height:90vh;overflow-y:auto}
-.modal-backdrop.open .modal{transform:scale(1)}
-.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
-.modal-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--text)}
-.modal-close{width:30px;height:30px;border-radius:7px;border:1px solid var(--border);background:var(--bg3);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);font-size:1rem;transition:all var(--t)}
-.modal-close:hover{border-color:var(--red);color:var(--red)}
-.modal-footer{display:flex;gap:0.75rem;margin-top:1.25rem;justify-content:flex-end}
-.btn-cancel{height:38px;padding:0 1.25rem;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:0.85rem;cursor:pointer;transition:all var(--t)}
-.btn-cancel:hover{border-color:var(--text3);color:var(--text)}
-.btn-save{height:38px;padding:0 1.5rem;background:var(--gold);border:none;border-radius:8px;color:#0D0D0D;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all var(--t)}
-.btn-save:hover{background:var(--gold-l)}
+/* COMANDA */
+.comandas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin-bottom:1rem}
+.comanda-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all var(--t)}
+.comanda-card:hover{border-color:var(--gold-d)}
+.comanda-card.aberta{border-color:rgba(201,168,76,0.3)}
+.comanda-card.fechada{opacity:0.6}
+.cc-header{padding:1rem 1.1rem 0.75rem;display:flex;align-items:flex-start;justify-content:space-between;border-bottom:1px solid var(--border)}
+.cc-nome{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700}
+.cc-meta{font-size:0.72rem;color:var(--text2);margin-top:2px}
+.cc-body{padding:0.75rem 1.1rem}
+.cc-item{display:flex;justify-content:space-between;font-size:0.78rem;padding:0.25rem 0;color:var(--text2)}
+.cc-item span:last-child{color:var(--gold);font-family:'Playfair Display',serif}
+.cc-total{display:flex;justify-content:space-between;align-items:center;padding:0.65rem 1.1rem;border-top:1px solid var(--border);background:var(--bg3)}
+.cc-total-label{font-size:0.75rem;color:var(--text2)}
+.cc-total-val{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--gold)}
+.cc-actions{display:flex;gap:0.5rem;padding:0.65rem 1.1rem;border-top:1px solid var(--border)}
+.cc-btn{flex:1;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:0.75rem;font-weight:500;cursor:pointer;transition:all var(--t)}
+.cc-btn:hover{border-color:var(--gold-d);color:var(--text)}
+.cc-btn.primary{background:var(--gold);border-color:var(--gold);color:#0D0D0D;font-weight:600}
+.cc-btn.primary:hover{background:var(--gold-l)}
+.cc-btn.danger{border-color:var(--red-dim);color:var(--red)}
+.comanda-nova{background:var(--bg2);border:2px dashed var(--border);border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.5rem;min-height:180px;cursor:pointer;transition:all var(--t);color:var(--text3)}
+.comanda-nova:hover{border-color:var(--gold-d);color:var(--gold)}
+.comanda-nova svg{width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 
-/* CHART BAR */
-.chart-bars{display:flex;align-items:flex-end;gap:6px;height:100px;margin-top:0.5rem}
-.bar{flex:1;border-radius:4px 4px 0 0;background:var(--gold-dim);border:1px solid rgba(201,168,76,0.2);transition:height 0.5s cubic-bezier(.4,0,.2,1);cursor:pointer;position:relative}
-.bar:hover{background:rgba(201,168,76,0.25)}
-.bar-tip{position:absolute;top:-24px;left:50%;transform:translateX(-50%);font-size:0.65rem;color:var(--gold);white-space:nowrap;opacity:0;transition:opacity 0.2s}
-.bar:hover .bar-tip{opacity:1}
-.chart-labels{display:flex;gap:6px;margin-top:4px}
-.chart-label{flex:1;text-align:center;font-size:0.62rem;color:var(--text3)}
-
-/* TOAST */
-.toast{position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:0.85rem 1.25rem;font-size:0.85rem;color:var(--text);z-index:999;opacity:0;transform:translateY(8px);transition:all var(--t);pointer-events:none;display:flex;align-items:center;gap:8px}
-.toast.show{opacity:1;transform:translateY(0)}
-.toast.success{border-color:rgba(46,204,113,0.3);color:var(--green)}
-.toast.error{border-color:rgba(231,76,60,0.3);color:var(--red)}
-
-/* EMPTY */
-.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.75rem;padding:3rem;text-align:center;color:var(--text3)}
-.empty svg{width:36px;height:36px;stroke:var(--text3);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;opacity:0.5}
-.empty p{font-size:0.88rem}
-
-/* CAIXA ABRIR/FECHAR */
-.caixa-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;text-align:center;max-width:400px;margin:2rem auto}
-.caixa-big{font-family:'Playfair Display',serif;font-size:3rem;font-weight:900;color:var(--gold);margin:1rem 0}
-
-/* FLUXO ITEM */
+/* FLUXO */
 .fluxo-item{display:flex;align-items:center;gap:0.85rem;padding:0.75rem 0;border-bottom:1px solid var(--border)}
 .fluxo-item:last-child{border:none}
 .fi-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .fi-info{flex:1}
-.fi-desc{font-size:0.85rem;font-weight:500;color:var(--text)}
+.fi-desc{font-size:0.85rem;font-weight:500}
 .fi-meta{font-size:0.72rem;color:var(--text3);margin-top:2px}
 .fi-val{font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:600}
 .fi-val.entrada{color:var(--green)}
 .fi-val.saida{color:var(--red)}
 
-/* ESTOQUE ALERT */
+/* MODAL */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity var(--t)}
+.modal-backdrop.open{opacity:1;pointer-events:all}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:1.5rem;width:100%;max-width:500px;transform:scale(0.95);transition:transform var(--t);max-height:92vh;overflow-y:auto}
+.modal-backdrop.open .modal{transform:scale(1)}
+.modal::-webkit-scrollbar{display:none}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700}
+.modal-close{width:30px;height:30px;border-radius:7px;border:1px solid var(--border);background:var(--bg3);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);transition:all var(--t)}
+.modal-close:hover{border-color:var(--red);color:var(--red)}
+.modal-footer{display:flex;gap:0.75rem;margin-top:1.25rem;justify-content:flex-end}
+.btn-cancel{height:38px;padding:0 1.25rem;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:0.85rem;cursor:pointer;transition:all var(--t)}
+.btn-cancel:hover{color:var(--text)}
+.btn-save{height:38px;padding:0 1.5rem;background:var(--gold);border:none;border-radius:8px;color:#0D0D0D;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all var(--t)}
+.btn-save:hover{background:var(--gold-l)}
+
+/* CHART */
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:100px;margin-top:0.5rem}
+.bar{flex:1;border-radius:4px 4px 0 0;background:var(--gold-dim);border:1px solid rgba(201,168,76,0.2);transition:height 0.5s;cursor:pointer;position:relative;min-height:4px}
+.bar:hover{background:rgba(201,168,76,0.3)}
+.bar-tip{position:absolute;top:-24px;left:50%;transform:translateX(-50%);font-size:0.62rem;color:var(--gold);white-space:nowrap;opacity:0;transition:opacity 0.2s;pointer-events:none}
+.bar:hover .bar-tip{opacity:1}
+.chart-labels{display:flex;gap:6px;margin-top:4px}
+.chart-label{flex:1;text-align:center;font-size:0.62rem;color:var(--text3)}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:0.85rem 1.25rem;font-size:0.85rem;color:var(--text);z-index:9999;opacity:0;transform:translateY(8px);transition:all var(--t);pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.success{border-color:rgba(46,204,113,0.3);color:var(--green)}
+.toast.error{border-color:rgba(231,76,60,0.3);color:var(--red)}
+
+/* EMPTY */
+.empty{display:flex;flex-direction:column;align-items:center;gap:0.75rem;padding:3rem;text-align:center;color:var(--text3)}
+.empty svg{width:36px;height:36px;stroke:var(--text3);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;opacity:0.5}
+.empty p{font-size:0.88rem}
+
+/* CAIXA */
+.caixa-big{font-family:'Playfair Display',serif;font-size:3rem;font-weight:900;color:var(--gold);margin:1rem 0}
 .estoque-alert{background:var(--orange-dim);border:1px solid rgba(243,156,18,0.25);border-radius:8px;padding:0.65rem 1rem;font-size:0.8rem;color:var(--orange);display:flex;align-items:center;gap:6px;margin-bottom:1rem}
 .estoque-alert svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 
-/* PERIODO FILTER */
-.periodo-tabs{display:flex;gap:0.4rem;margin-bottom:1rem}
-.periodo-tab{height:30px;padding:0 0.85rem;border-radius:7px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:0.75rem;cursor:pointer;transition:all var(--t)}
-.periodo-tab.active{background:var(--gold-dim);border-color:rgba(201,168,76,0.3);color:var(--gold)}
-
+/* RECIBO PRINT */
 @media print{
-  .sidebar,.topbar{display:none}
-  .content{overflow:visible}
+  body *{visibility:hidden}
+  #recibo-print,#recibo-print *{visibility:visible}
+  #recibo-print{position:fixed;inset:0;background:#fff;color:#000;padding:20px;font-family:monospace;font-size:12px;z-index:99999}
 }
+#recibo-print{display:none}
 </style>
 </head>
 <body>
@@ -240,53 +258,50 @@ textarea{resize:vertical;min-height:80px}
     <div class="caixa-label">Caixa hoje</div>
     <div class="caixa-val" id="sb-caixa">R$ 0,00</div>
     <div class="caixa-status">
-      <div class="caixa-dot" id="sb-dot"></div>
+      <div class="caixa-dot closed" id="sb-dot"></div>
       <span id="sb-status">Fechado</span>
     </div>
   </div>
   <nav>
-    <div class="nav-label">Principal</div>
-    <div class="nav-item active" onclick="goPanel('dashboard')">
-      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-      Dashboard
+    <div class="nav-label">Operação</div>
+    <div class="nav-item active" id="nav-dashboard" onclick="goPanel('dashboard')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard
     </div>
-    <div class="nav-item" onclick="goPanel('pdv')">
-      <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-      PDV — Venda
+    <div class="nav-item" id="nav-pdv" onclick="goPanel('pdv')">
+      <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>PDV — Venda
+    </div>
+    <div class="nav-item" id="nav-comanda" onclick="goPanel('comanda')">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/></svg>Comanda
+      <span class="nav-badge" id="nb-comanda" style="display:none">0</span>
     </div>
     <div class="nav-sep"></div>
     <div class="nav-label">Financeiro</div>
-    <div class="nav-item" onclick="goPanel('caixa')">
-      <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-      Caixa
+    <div class="nav-item" id="nav-caixa" onclick="goPanel('caixa')">
+      <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Caixa
     </div>
-    <div class="nav-item" onclick="goPanel('fluxo')">
-      <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-      Fluxo de Caixa
+    <div class="nav-item" id="nav-fluxo" onclick="goPanel('fluxo')">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Fluxo de Caixa
+    </div>
+    <div class="nav-item" id="nav-comissoes" onclick="goPanel('comissoes')">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Comissões
     </div>
     <div class="nav-sep"></div>
     <div class="nav-label">Cadastros</div>
-    <div class="nav-item" onclick="goPanel('servicos')">
-      <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-      Serviços
+    <div class="nav-item" id="nav-servicos" onclick="goPanel('servicos')">
+      <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Serviços
     </div>
-    <div class="nav-item" onclick="goPanel('produtos')">
-      <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-      Produtos & Estoque
+    <div class="nav-item" id="nav-produtos" onclick="goPanel('produtos')">
+      <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Produtos & Estoque
     </div>
-    <div class="nav-item" onclick="goPanel('clientes')">
-      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      Clientes
+    <div class="nav-item" id="nav-clientes" onclick="goPanel('clientes')">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Clientes
     </div>
-    <div class="nav-item" onclick="goPanel('barbeiros')">
-      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      Barbeiros
+    <div class="nav-item" id="nav-funcionarios" onclick="goPanel('funcionarios')">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Funcionários
     </div>
     <div class="nav-sep"></div>
-    <div class="nav-label">Análise</div>
-    <div class="nav-item" onclick="goPanel('relatorios')">
-      <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-      Relatórios
+    <div class="nav-item" id="nav-relatorios" onclick="goPanel('relatorios')">
+      <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Relatórios
     </div>
   </nav>
   <div class="sidebar-bottom">
@@ -302,14 +317,13 @@ textarea{resize:vertical;min-height:80px}
   </div>
   <div class="content" id="content"></div>
 </div>
-
-</div><!-- app -->
+</div>
 
 <!-- MODAL -->
 <div class="modal-backdrop" id="modal-backdrop">
   <div class="modal" id="modal">
     <div class="modal-header">
-      <div class="modal-title" id="modal-title">Modal</div>
+      <div class="modal-title" id="modal-title"></div>
       <div class="modal-close" onclick="closeModal()">✕</div>
     </div>
     <div id="modal-body"></div>
@@ -317,1126 +331,764 @@ textarea{resize:vertical;min-height:80px}
   </div>
 </div>
 
+<!-- RECIBO PRINT -->
+<div id="recibo-print"></div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
 // ============================================================
-// DATA LAYER — localStorage
+// DB
 // ============================================================
 const DB = {
-  get(key, def=[]) {
-    try { return JSON.parse(localStorage.getItem('coronel_'+key)) ?? def; }
-    catch { return def; }
-  },
-  set(key, val) { localStorage.setItem('coronel_'+key, JSON.stringify(val)); },
-  id() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+  get(k,d=[]){try{return JSON.parse(localStorage.getItem('coronel_'+k))??d}catch{return d}},
+  set(k,v){localStorage.setItem('coronel_'+k,JSON.stringify(v))},
+  id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
 };
 
-// Seed inicial
-function seedData() {
-  if (DB.get('seeded', false)) return;
-
-  DB.set('servicos', [
-    {id:DB.id(), nome:'Corte Equipe', preco:60, duracao:30, barbeiro:'Equipe', ativo:true},
-    {id:DB.id(), nome:'Barba Equipe', preco:60, duracao:30, barbeiro:'Equipe', ativo:true},
-    {id:DB.id(), nome:'Corte + Barba Equipe', preco:110, duracao:60, barbeiro:'Equipe', ativo:true},
-    {id:DB.id(), nome:'Corte Ruan', preco:70, duracao:30, barbeiro:'Ruan Alexsander', ativo:true},
-    {id:DB.id(), nome:'Barba Ruan', preco:70, duracao:30, barbeiro:'Ruan Alexsander', ativo:true},
-    {id:DB.id(), nome:'Corte + Barba Ruan', preco:130, duracao:60, barbeiro:'Ruan Alexsander', ativo:true},
-    {id:DB.id(), nome:'Design de Sobrancelha', preco:30, duracao:30, barbeiro:'Equipe', ativo:true},
-    {id:DB.id(), nome:'Pezinho & Contorno', preco:30, duracao:30, barbeiro:'Equipe', ativo:true},
-    {id:DB.id(), nome:'Limpeza com Cera', preco:40, duracao:30, barbeiro:'Equipe', ativo:true},
-    {id:DB.id(), nome:'Selagem dos Fios', preco:120, duracao:30, barbeiro:'Equipe', ativo:true},
-    {id:DB.id(), nome:'Visagismo + Corte (Ruan)', preco:150, duracao:60, barbeiro:'Ruan Alexsander', ativo:true},
+function seedData(){
+  if(DB.get('seeded',false)) return;
+  DB.set('servicos',[
+    {id:DB.id(),nome:'Corte Equipe',preco:60,duracao:30,funcionario:'Equipe',ativo:true},
+    {id:DB.id(),nome:'Barba Equipe',preco:60,duracao:30,funcionario:'Equipe',ativo:true},
+    {id:DB.id(),nome:'Corte + Barba Equipe',preco:110,duracao:60,funcionario:'Equipe',ativo:true},
+    {id:DB.id(),nome:'Corte Ruan',preco:70,duracao:30,funcionario:'Ruan Alexsander',ativo:true},
+    {id:DB.id(),nome:'Barba Ruan',preco:70,duracao:30,funcionario:'Ruan Alexsander',ativo:true},
+    {id:DB.id(),nome:'Corte + Barba Ruan',preco:130,duracao:60,funcionario:'Ruan Alexsander',ativo:true},
+    {id:DB.id(),nome:'Design de Sobrancelha',preco:30,duracao:30,funcionario:'Equipe',ativo:true},
+    {id:DB.id(),nome:'Pezinho & Contorno',preco:30,duracao:30,funcionario:'Equipe',ativo:true},
+    {id:DB.id(),nome:'Limpeza com Cera',preco:40,duracao:30,funcionario:'Equipe',ativo:true},
+    {id:DB.id(),nome:'Selagem dos Fios',preco:120,duracao:30,funcionario:'Equipe',ativo:true},
+    {id:DB.id(),nome:'Visagismo + Corte (Ruan)',preco:150,duracao:60,funcionario:'Ruan Alexsander',ativo:true},
   ]);
-
-  DB.set('produtos', [
-    {id:DB.id(), nome:'Água Mineral', categoria:'Bebida', preco:3, custo:1.5, estoque:24, minimo:5, ativo:true},
-    {id:DB.id(), nome:'Refrigerante Lata', categoria:'Bebida', preco:6, custo:3, estoque:12, minimo:4, ativo:true},
-    {id:DB.id(), nome:'Cerveja Long Neck', categoria:'Bebida', preco:10, custo:5, estoque:18, minimo:6, ativo:true},
-    {id:DB.id(), nome:'Pomada Modeladora', categoria:'Produto', preco:35, custo:18, estoque:8, minimo:3, ativo:true},
-    {id:DB.id(), nome:'Shampoo Barba', categoria:'Produto', preco:28, custo:14, estoque:5, minimo:2, ativo:true},
-    {id:DB.id(), nome:'Óleo para Barba', categoria:'Produto', preco:45, custo:22, estoque:4, minimo:2, ativo:true},
+  DB.set('produtos',[
+    {id:DB.id(),nome:'Água Mineral',categoria:'Bebida',preco:3,custo:1.5,estoque:24,minimo:5,comissao:10,ativo:true},
+    {id:DB.id(),nome:'Refrigerante Lata',categoria:'Bebida',preco:6,custo:3,estoque:12,minimo:4,comissao:10,ativo:true},
+    {id:DB.id(),nome:'Cerveja Long Neck',categoria:'Bebida',preco:10,custo:5,estoque:18,minimo:6,comissao:10,ativo:true},
+    {id:DB.id(),nome:'Pomada Modeladora',categoria:'Produto',preco:35,custo:18,estoque:8,minimo:3,comissao:40,ativo:true},
+    {id:DB.id(),nome:'Shampoo Barba',categoria:'Produto',preco:28,custo:14,estoque:5,minimo:2,comissao:40,ativo:true},
+    {id:DB.id(),nome:'Óleo para Barba',categoria:'Produto',preco:45,custo:22,estoque:4,minimo:2,comissao:40,ativo:true},
   ]);
-
-  DB.set('barbeiros', [
-    {id:DB.id(), nome:'Ruan Alexsander', cargo:'Barber Master', ativo:true},
-    {id:DB.id(), nome:'Kalyu', cargo:'Barber', ativo:true},
+  DB.set('funcionarios',[
+    {id:DB.id(),nome:'Ruan Alexsander',cargo:'Barbeiro',comissao:40,ativo:true},
+    {id:DB.id(),nome:'Kalyu',cargo:'Barbeiro',comissao:40,ativo:true},
   ]);
-
-  DB.set('clientes', []);
-  DB.set('vendas', []);
-  DB.set('lancamentos', []);
-  DB.set('caixa', {aberto:false, saldo:0, abertura:0});
-  DB.set('seeded', true);
+  DB.set('clientes',[]);
+  DB.set('vendas',[]);
+  DB.set('lancamentos',[]);
+  DB.set('comandas',[]);
+  DB.set('caixa',{aberto:false,saldo:0,abertura:0});
+  DB.set('seeded',true);
 }
-
 seedData();
 
 // ============================================================
 // STATE
 // ============================================================
-let currentPanel = 'dashboard';
-let cart = [];
-let pgtoAtivo = 'Dinheiro';
-let pdvFiltro = 'Todos';
-
-// ============================================================
-// NAVIGATION
-// ============================================================
-function goPanel(name) {
-  currentPanel = name;
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => {
-    if (n.getAttribute('onclick')?.includes(name)) n.classList.add('active');
-  });
-
-  const titles = {
-    dashboard:'Dashboard', pdv:'PDV — Ponto de Venda',
-    caixa:'Controle de Caixa', fluxo:'Fluxo de Caixa',
-    servicos:'Serviços', produtos:'Produtos & Estoque',
-    clientes:'Clientes', barbeiros:'Barbeiros', relatorios:'Relatórios'
-  };
-  document.getElementById('topbar-title').textContent = titles[name] || name;
-
-  const renders = {
-    dashboard: renderDashboard, pdv: renderPDV,
-    caixa: renderCaixa, fluxo: renderFluxo,
-    servicos: renderServicos, produtos: renderProdutos,
-    clientes: renderClientes, barbeiros: renderBarbeiros,
-    relatorios: renderRelatorios
-  };
-  const actions = {
-    dashboard: '', pdv: '',
-    caixa: '',
-    fluxo: `<button class="tb-btn primary" onclick="modalLancamento()"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Lançamento</button>`,
-    servicos: `<button class="tb-btn primary" onclick="modalServico()"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Novo serviço</button>`,
-    produtos: `<button class="tb-btn primary" onclick="modalProduto()"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Novo produto</button>`,
-    clientes: `<button class="tb-btn primary" onclick="modalCliente()"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Novo cliente</button>`,
-    barbeiros: `<button class="tb-btn primary" onclick="modalBarbeiro()"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Novo barbeiro</button>`,
-    relatorios: `<button class="tb-btn" onclick="window.print()"><svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Imprimir</button>`
-  };
-
-  document.getElementById('topbar-actions').innerHTML = actions[name] || '';
-  renders[name]?.();
-  updateSidebar();
-}
-
-// ============================================================
-// SIDEBAR UPDATE
-// ============================================================
-function updateSidebar() {
-  const caixa = DB.get('caixa', {aberto:false, saldo:0});
-  document.getElementById('sb-caixa').textContent = fmt(caixa.saldo || 0);
-  const dot = document.getElementById('sb-dot');
-  const st = document.getElementById('sb-status');
-  if (caixa.aberto) {
-    dot.className = 'caixa-dot';
-    st.textContent = 'Aberto';
-  } else {
-    dot.className = 'caixa-dot closed';
-    st.textContent = 'Fechado';
-  }
-  const now = new Date();
-  const days = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
-  const months = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
-  document.getElementById('date-display').textContent =
-    `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
-}
+let currentPanel='dashboard';
+let cart=[];
+let pgtoAtivo='Dinheiro';
+let pdvFiltro='Todos';
 
 // ============================================================
 // FORMAT
 // ============================================================
-function fmt(val) {
-  return 'R$ ' + Number(val).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+const fmt=v=>'R$ '+Number(v).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+const fmtDate=ts=>{if(!ts)return'—';const d=new Date(ts);return`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};
+const today=()=>{const d=new Date();return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+
+// ============================================================
+// NAV
+// ============================================================
+function goPanel(name){
+  currentPanel=name;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const el=document.getElementById('nav-'+name);
+  if(el) el.classList.add('active');
+  const titles={dashboard:'Dashboard',pdv:'PDV — Ponto de Venda',comanda:'Comandas',caixa:'Controle de Caixa',fluxo:'Fluxo de Caixa',comissoes:'Comissões',servicos:'Serviços',produtos:'Produtos & Estoque',clientes:'Clientes',funcionarios:'Funcionários',relatorios:'Relatórios'};
+  document.getElementById('topbar-title').textContent=titles[name]||name;
+  const actions={
+    fluxo:`<button class="tb-btn primary" onclick="modalLancamento()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Lançamento</button>`,
+    servicos:`<button class="tb-btn primary" onclick="modalServico()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Novo serviço</button>`,
+    produtos:`<button class="tb-btn primary" onclick="modalProduto()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Novo produto</button>`,
+    clientes:`<button class="tb-btn primary" onclick="modalCliente()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Novo cliente</button>`,
+    funcionarios:`<button class="tb-btn primary" onclick="modalFuncionario()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Novo funcionário</button>`,
+    comanda:`<button class="tb-btn primary" onclick="modalNovaComanda()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nova comanda</button>`,
+    relatorios:`<button class="tb-btn" onclick="window.print()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Imprimir</button>`
+  };
+  document.getElementById('topbar-actions').innerHTML=actions[name]||'';
+  ({dashboard:renderDashboard,pdv:renderPDV,comanda:renderComanda,caixa:renderCaixa,fluxo:renderFluxo,comissoes:renderComissoes,servicos:renderServicos,produtos:renderProdutos,clientes:renderClientes,funcionarios:renderFuncionarios,relatorios:renderRelatorios})[name]?.();
+  updateSidebar();
 }
-function fmtDate(ts) {
-  if (!ts) return '—';
-  const d = new Date(ts);
-  return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-}
-function today() {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+
+function updateSidebar(){
+  const caixa=DB.get('caixa',{aberto:false,saldo:0});
+  document.getElementById('sb-caixa').textContent=fmt(caixa.saldo||0);
+  const aberto=caixa.aberto;
+  document.getElementById('sb-dot').className='caixa-dot'+(aberto?'':' closed');
+  document.getElementById('sb-status').textContent=aberto?'Aberto':'Fechado';
+  const abertas=DB.get('comandas',[]).filter(c=>c.status==='aberta').length;
+  const nb=document.getElementById('nb-comanda');
+  nb.style.display=abertas?'flex':'none';
+  nb.textContent=abertas;
+  const now=new Date();
+  const dias=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+  const meses=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  document.getElementById('date-display').textContent=`${dias[now.getDay()]}, ${now.getDate()} ${meses[now.getMonth()]}`;
 }
 
 // ============================================================
 // DASHBOARD
 // ============================================================
-function renderDashboard() {
-  const vendas = DB.get('vendas', []);
-  const lancamentos = DB.get('lancamentos', []);
-  const t = today();
+function renderDashboard(){
+  const vendas=DB.get('vendas',[]),lancs=DB.get('lancamentos',[]),t=today();
+  const vh=vendas.filter(v=>v.data?.startsWith(t));
+  const rh=vh.reduce((s,v)=>s+v.total,0);
+  const dh=lancs.filter(l=>l.tipo==='saida'&&l.data?.startsWith(t)).reduce((s,l)=>s+l.valor,0);
+  const semana=[],labels=[];
+  const dias=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;semana.push(vendas.filter(v=>v.data?.startsWith(k)).reduce((s,v)=>s+v.total,0));labels.push(dias[d.getDay()]);}
+  const mx=Math.max(...semana,1);
+  const cnt={};vendas.forEach(v=>v.itens?.forEach(i=>{cnt[i.nome]=(cnt[i.nome]||0)+i.qty;}));
+  const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const ultimas=[...vendas].sort((a,b)=>b.ts-a.ts).slice(0,5);
+  const baixo=DB.get('produtos',[]).filter(p=>p.estoque<=p.minimo);
+  const abertas=DB.get('comandas',[]).filter(c=>c.status==='aberta').length;
 
-  const vendasHoje = vendas.filter(v => v.data?.startsWith(t));
-  const receitaHoje = vendasHoje.reduce((s,v) => s+v.total, 0);
-
-  // Semana
-  const semana7 = [];
-  const labels7 = [];
-  const dias = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-  for (let i=6; i>=0; i--) {
-    const d = new Date(); d.setDate(d.getDate()-i);
-    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    semana7.push(vendas.filter(v=>v.data?.startsWith(key)).reduce((s,v)=>s+v.total,0));
-    labels7.push(dias[d.getDay()]);
-  }
-  const max7 = Math.max(...semana7, 1);
-
-  const despesasHoje = lancamentos.filter(l => l.tipo==='saida' && l.data?.startsWith(t)).reduce((s,l) => s+l.valor, 0);
-  const atendHoje = vendasHoje.length;
-  const ticketMedio = atendHoje ? (receitaHoje/atendHoje) : 0;
-
-  // Top serviços
-  const contagem = {};
-  vendas.forEach(v => v.itens?.forEach(i => {
-    contagem[i.nome] = (contagem[i.nome]||0) + i.qty;
-  }));
-  const topServicos = Object.entries(contagem).sort((a,b)=>b[1]-a[1]).slice(0,5);
-
-  // Últimas vendas
-  const ultimas = [...vendas].sort((a,b)=>b.ts-a.ts).slice(0,5);
-
-  // Estoque baixo
-  const produtos = DB.get('produtos', []);
-  const baixo = produtos.filter(p => p.estoque <= p.minimo);
-
-  document.getElementById('content').innerHTML = `
+  document.getElementById('content').innerHTML=`
     <div class="stats-row">
-      <div class="stat-card green">
-        <div class="sc-icon green"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-        <div class="sc-label">Receita hoje</div>
-        <div class="sc-val">${fmt(receitaHoje)}</div>
-        <div class="sc-sub">${atendHoje} atendimento${atendHoje!==1?'s':''}</div>
-      </div>
-      <div class="stat-card gold">
-        <div class="sc-icon gold"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
-        <div class="sc-label">Ticket médio</div>
-        <div class="sc-val">${fmt(ticketMedio)}</div>
-        <div class="sc-sub">por atendimento</div>
-      </div>
-      <div class="stat-card red">
-        <div class="sc-icon red"><svg viewBox="0 0 24 24"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg></div>
-        <div class="sc-label">Despesas hoje</div>
-        <div class="sc-val">${fmt(despesasHoje)}</div>
-        <div class="sc-sub">saídas registradas</div>
-      </div>
-      <div class="stat-card blue">
-        <div class="sc-icon blue"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-        <div class="sc-label">Lucro hoje</div>
-        <div class="sc-val">${fmt(receitaHoje - despesasHoje)}</div>
-        <div class="sc-sub">receita − despesas</div>
-      </div>
+      <div class="stat-card green"><div class="sc-icon green"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div class="sc-label">Receita hoje</div><div class="sc-val">${fmt(rh)}</div><div class="sc-sub">${vh.length} venda${vh.length!==1?'s':''}</div></div>
+      <div class="stat-card red"><div class="sc-icon red"><svg viewBox="0 0 24 24"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg></div><div class="sc-label">Despesas hoje</div><div class="sc-val">${fmt(dh)}</div><div class="sc-sub">saídas</div></div>
+      <div class="stat-card gold"><div class="sc-icon gold"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="sc-label">Lucro hoje</div><div class="sc-val">${fmt(rh-dh)}</div><div class="sc-sub">receita − despesas</div></div>
+      <div class="stat-card blue"><div class="sc-icon blue"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="sc-label">Comandas abertas</div><div class="sc-val">${abertas}</div><div class="sc-sub">em atendimento</div></div>
     </div>
-
-    ${baixo.length ? `<div class="estoque-alert"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Estoque baixo: ${baixo.map(p=>p.nome).join(', ')}</div>` : ''}
-
+    ${baixo.length?`<div class="estoque-alert"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Estoque baixo: ${baixo.map(p=>p.nome).join(', ')}</div>`:''}
     <div class="grid-2">
-      <div class="card">
-        <div class="card-title">Faturamento — últimos 7 dias</div>
-        <div class="chart-bars">
-          ${semana7.map((v,i) => `<div class="bar" style="height:${Math.max((v/max7)*100,v>0?6:2)}%"><div class="bar-tip">${fmt(v)}</div></div>`).join('')}
-        </div>
-        <div class="chart-labels">
-          ${labels7.map(l=>`<div class="chart-label">${l}</div>`).join('')}
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">Mais vendidos (total)</div>
-        ${topServicos.length ? topServicos.map(([nome,qtd],i)=>`
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border)">
-            <div style="display:flex;align-items:center;gap:8px">
-              <div style="width:20px;height:20px;border-radius:5px;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:var(--gold);font-weight:700">${i+1}</div>
-              <div style="font-size:0.82rem;color:var(--text)">${nome}</div>
-            </div>
-            <div class="badge gold">${qtd}x</div>
-          </div>`).join('') : '<div class="empty"><p>Sem vendas ainda</p></div>'}
-      </div>
+      <div class="card"><div class="card-title">Faturamento — 7 dias</div><div class="chart-bars">${semana.map((v,i)=>`<div class="bar" style="height:${Math.max((v/mx)*100,v>0?6:2)}%"><div class="bar-tip">${fmt(v)}</div></div>`).join('')}</div><div class="chart-labels">${labels.map(l=>`<div class="chart-label">${l}</div>`).join('')}</div></div>
+      <div class="card"><div class="card-title">Mais vendidos</div>${top.length?top.map(([n,q],i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.45rem 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:8px"><div style="width:20px;height:20px;border-radius:5px;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:.62rem;color:var(--gold);font-weight:700">${i+1}</div><div style="font-size:.8rem">${n}</div></div><div class="badge gold">${q}x</div></div>`).join(''):'<div class="empty"><p>Sem vendas</p></div>'}</div>
     </div>
-
-    <div class="card">
-      <div class="card-title">Últimas vendas</div>
-      ${ultimas.length ? `<div class="table-wrap"><table>
-        <thead><tr><th>Horário</th><th>Cliente</th><th>Itens</th><th>Pgto</th><th>Total</th></tr></thead>
-        <tbody>
-          ${ultimas.map(v=>`<tr>
-            <td>${fmtDate(v.ts)}</td>
-            <td>${v.cliente||'—'}</td>
-            <td style="font-size:0.75rem;color:var(--text2)">${v.itens?.map(i=>i.nome).join(', ')||'—'}</td>
-            <td><div class="badge blue">${v.pgto}</div></td>
-            <td class="td-gold">${fmt(v.total)}</td>
-          </tr>`).join('')}
-        </tbody>
-      </table></div>` : '<div class="empty"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><p>Nenhuma venda registrada hoje</p></div>'}
-    </div>
-  `;
+    <div class="card"><div class="card-title">Últimas vendas</div>${ultimas.length?`<div class="table-wrap"><table><thead><tr><th>Horário</th><th>Cliente</th><th>Atendente</th><th>Itens</th><th>Pgto</th><th>Total</th></tr></thead><tbody>${ultimas.map(v=>`<tr><td>${fmtDate(v.ts)}</td><td>${v.cliente||'—'}</td><td>${v.funcionario||'—'}</td><td style="font-size:.75rem;color:var(--text2)">${v.itens?.map(i=>i.nome).join(', ')||'—'}</td><td><div class="badge blue">${v.pgto}</div></td><td class="td-gold">${fmt(v.total)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><p>Nenhuma venda hoje</p></div>'}</div>`;
 }
 
 // ============================================================
 // PDV
 // ============================================================
-function renderPDV() {
-  const servicos = DB.get('servicos', []).filter(s=>s.ativo);
-  const produtos = DB.get('produtos', []).filter(p=>p.ativo);
-  const todos = [
-    ...servicos.map(s=>({...s, tipo:'servico', icone:'✂️'})),
-    ...produtos.map(p=>({...p, tipo:'produto', icone: p.categoria==='Bebida'?'🥤':'🧴'}))
-  ];
-  const categorias = ['Todos', 'Serviços', 'Bebidas', 'Produtos'];
-  const filtrados = pdvFiltro==='Todos' ? todos :
-    pdvFiltro==='Serviços' ? todos.filter(i=>i.tipo==='servico') :
-    pdvFiltro==='Bebidas' ? todos.filter(i=>i.categoria==='Bebida') :
-    todos.filter(i=>i.tipo==='produto' && i.categoria!=='Bebida');
+function renderPDV(){
+  const servicos=DB.get('servicos',[]).filter(s=>s.ativo);
+  const produtos=DB.get('produtos',[]).filter(p=>p.ativo);
+  const todos=[...servicos.map(s=>({...s,tipo:'servico',icone:'✂️'})),...produtos.map(p=>({...p,tipo:'produto',icone:p.categoria==='Bebida'?'🥤':'🧴'}))];
+  const cats=['Todos','Serviços','Bebidas','Produtos'];
+  const filtrados=pdvFiltro==='Todos'?todos:pdvFiltro==='Serviços'?todos.filter(i=>i.tipo==='servico'):pdvFiltro==='Bebidas'?todos.filter(i=>i.categoria==='Bebida'):todos.filter(i=>i.tipo==='produto'&&i.categoria!=='Bebida');
+  const clientes=DB.get('clientes',[]);
+  const funcionarios=DB.get('funcionarios',[]).filter(f=>f.ativo);
+  const comandasAbertas=DB.get('comandas',[]).filter(c=>c.status==='aberta');
+  const subtotal=cart.reduce((s,i)=>s+i.preco*i.qty,0);
 
-  const clientes = DB.get('clientes', []);
-  const barbeiros = DB.get('barbeiros', []).filter(b=>b.ativo);
-  const subtotal = cart.reduce((s,i)=>s+i.preco*i.qty, 0);
-
-  document.getElementById('content').innerHTML = `
+  document.getElementById('content').innerHTML=`
     <div class="pdv-layout">
       <div class="pdv-items">
-        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.85rem">
-          <input type="text" placeholder="Buscar item..." id="pdv-search" oninput="pdvSearch()" style="flex:1;height:38px"/>
+        <div style="display:flex;gap:.5rem;margin-bottom:.75rem">
+          <input type="text" placeholder="Buscar item..." id="pdv-search" oninput="pdvSearch()" style="flex:1;height:36px"/>
+          ${comandasAbertas.length?`<select id="pdv-comanda-import" onchange="importarComanda(this.value)" style="height:36px;width:auto;font-size:.8rem"><option value="">Importar comanda...</option>${comandasAbertas.map(c=>`<option value="${c.id}">${c.cliente} (${fmt(c.itens?.reduce((s,i)=>s+i.preco*i.qty,0)||0)})</option>`).join('')}</select>`:''}
         </div>
-        <div class="pdv-tabs">
-          ${categorias.map(c=>`<button class="pdv-tab${pdvFiltro===c?' active':''}" onclick="setPdvFiltro('${c}')">${c}</button>`).join('')}
-        </div>
-        <div class="item-grid" id="item-grid">
-          ${filtrados.map(item=>`
-            <div class="item-card" onclick="addToCart('${item.id}','${item.nome}',${item.preco},'${item.tipo}')">
-              <div class="item-icon">${item.icone}</div>
-              <div class="item-name">${item.nome}</div>
-              <div class="item-price">${fmt(item.preco)}</div>
-            </div>`).join('')}
-        </div>
+        <div class="pdv-tabs">${cats.map(c=>`<button class="pdv-tab${pdvFiltro===c?' active':''}" onclick="setPdvFiltro('${c}')">${c}</button>`).join('')}</div>
+        <div class="item-grid" id="item-grid">${filtrados.map(item=>`<div class="item-card" onclick="addToCart('${item.id}','${item.nome}',${item.preco},'${item.tipo}')"><div class="item-icon">${item.icone}</div><div class="item-name">${item.nome}</div><div class="item-price">${fmt(item.preco)}</div></div>`).join('')}</div>
       </div>
-
       <div class="pdv-right">
         <div class="pdv-cart">
-          <div style="font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text3);margin-bottom:0.75rem">Carrinho ${cart.length?`(${cart.length} iten${cart.length!==1?'s':''})`:''}</div>
-          ${cart.length ? cart.map(i=>`
-            <div class="cart-item">
-              <div class="ci-name">${i.nome}</div>
-              <div class="ci-qty">
-                <div class="qty-btn" onclick="changeQty('${i.id}',-1)">−</div>
-                <span style="font-size:0.85rem;color:var(--text);min-width:16px;text-align:center">${i.qty}</span>
-                <div class="qty-btn" onclick="changeQty('${i.id}',1)">+</div>
-              </div>
-              <div class="ci-price">${fmt(i.preco*i.qty)}</div>
-            </div>`).join('') :
-            `<div class="empty" style="padding:2rem"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><p>Adicione itens ao carrinho</p></div>`}
+          <div style="font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text3);margin-bottom:.65rem">Carrinho ${cart.length?`(${cart.length} iten${cart.length!==1?'s':''})`:''}</div>
+          ${cart.length?cart.map(i=>`<div class="cart-item"><div class="ci-name">${i.nome}</div><div class="ci-qty"><div class="qty-btn" onclick="changeQty('${i.id}',-1)">−</div><span style="font-size:.82rem;min-width:14px;text-align:center">${i.qty}</span><div class="qty-btn" onclick="changeQty('${i.id}',1)">+</div></div><div class="ci-price">${fmt(i.preco*i.qty)}</div></div>`).join(''):'<div class="empty" style="padding:1.5rem"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><p>Carrinho vazio</p></div>'}
         </div>
-
         <div class="cart-total">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:0.5rem">
-            <div class="form-group">
-              <label>Cliente</label>
-              <select id="pdv-cliente"><option value="">Sem cadastro</option>${clientes.map(c=>`<option value="${c.nome}">${c.nome}</option>`).join('')}</select>
-            </div>
-            <div class="form-group">
-              <label>Barbeiro</label>
-              <select id="pdv-barbeiro"><option value="">Qualquer</option>${barbeiros.map(b=>`<option value="${b.nome}">${b.nome}</option>`).join('')}</select>
-            </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem">
+            <div class="form-group"><label>Cliente</label><select id="pdv-cliente"><option value="">Sem cadastro</option>${clientes.map(c=>`<option value="${c.nome}">${c.nome}</option>`).join('')}</select></div>
+            <div class="form-group"><label>Atendente</label><select id="pdv-func"><option value="">Não informado</option>${funcionarios.map(f=>`<option value="${f.nome}">${f.nome}</option>`).join('')}</select></div>
           </div>
-          <div class="total-row"><span>Subtotal</span><span>${fmt(subtotal)}</span></div>
-          <div class="total-final">
-            <div class="total-label">Total</div>
-            <div class="total-val">${fmt(subtotal)}</div>
-          </div>
-          <div class="pgto-btns">
-            ${['Dinheiro','Pix','Crédito','Débito'].map(p=>`<button class="pgto-btn${pgtoAtivo===p?' active':''}" onclick="setPgto('${p}')">${p}</button>`).join('')}
-          </div>
+          <div class="total-final"><div class="total-label">Total</div><div class="total-val">${fmt(subtotal)}</div></div>
+          <div class="pgto-btns">${['Dinheiro','Pix','Crédito','Débito'].map(p=>`<button class="pgto-btn${pgtoAtivo===p?' active':''}" onclick="setPgto('${p}')">${p}</button>`).join('')}</div>
           <button class="btn-cobrar" onclick="cobrar()" ${!cart.length?'disabled':''}>
-            ${cart.length ? `Cobrar ${fmt(subtotal)}` : 'Carrinho vazio'}
+            ${cart.length?`Cobrar ${fmt(subtotal)}`:'Carrinho vazio'}
           </button>
         </div>
       </div>
     </div>`;
 }
 
-function setPdvFiltro(f) { pdvFiltro = f; renderPDV(); }
-function setPgto(p) { pgtoAtivo = p; renderPDV(); }
-
-function pdvSearch() {
-  const q = document.getElementById('pdv-search')?.value.toLowerCase() || '';
-  const servicos = DB.get('servicos',[]).filter(s=>s.ativo);
-  const produtos = DB.get('produtos',[]).filter(p=>p.ativo);
-  const todos = [
-    ...servicos.map(s=>({...s,tipo:'servico',icone:'✂️'})),
-    ...produtos.map(p=>({...p,tipo:'produto',icone:p.categoria==='Bebida'?'🥤':'🧴'}))
-  ];
-  const filtrados = todos.filter(i => i.nome.toLowerCase().includes(q));
-  const grid = document.getElementById('item-grid');
-  if (grid) grid.innerHTML = filtrados.map(item=>`
-    <div class="item-card" onclick="addToCart('${item.id}','${item.nome}',${item.preco},'${item.tipo}')">
-      <div class="item-icon">${item.icone}</div>
-      <div class="item-name">${item.nome}</div>
-      <div class="item-price">${fmt(item.preco)}</div>
-    </div>`).join('');
+function setPdvFiltro(f){pdvFiltro=f;renderPDV();}
+function setPgto(p){pgtoAtivo=p;renderPDV();}
+function pdvSearch(){
+  const q=document.getElementById('pdv-search')?.value.toLowerCase()||'';
+  const s=DB.get('servicos',[]).filter(x=>x.ativo),p=DB.get('produtos',[]).filter(x=>x.ativo);
+  const todos=[...s.map(x=>({...x,tipo:'servico',icone:'✂️'})),...p.map(x=>({...x,tipo:'produto',icone:x.categoria==='Bebida'?'🥤':'🧴'}))].filter(i=>i.nome.toLowerCase().includes(q));
+  const g=document.getElementById('item-grid');
+  if(g) g.innerHTML=todos.map(item=>`<div class="item-card" onclick="addToCart('${item.id}','${item.nome}',${item.preco},'${item.tipo}')"><div class="item-icon">${item.icone}</div><div class="item-name">${item.nome}</div><div class="item-price">${fmt(item.preco)}</div></div>`).join('');
 }
-
-function addToCart(id, nome, preco, tipo) {
-  const ex = cart.find(i=>i.id===id);
-  if (ex) { ex.qty++; }
-  else { cart.push({id, nome, preco, tipo, qty:1}); }
-  renderPDV();
-  // restore search focus
-}
-
-function changeQty(id, delta) {
-  const idx = cart.findIndex(i=>i.id===id);
-  if (idx<0) return;
-  cart[idx].qty += delta;
-  if (cart[idx].qty <= 0) cart.splice(idx,1);
+function addToCart(id,nome,preco,tipo){
+  const ex=cart.find(i=>i.id===id);
+  if(ex) ex.qty++; else cart.push({id,nome,preco,tipo,qty:1});
   renderPDV();
 }
-
-function cobrar() {
-  if (!cart.length) return;
-  const caixa = DB.get('caixa',{aberto:false,saldo:0});
-  if (!caixa.aberto) {
-    showToast('Abra o caixa primeiro!','error');
-    goPanel('caixa');
-    return;
-  }
-  const cliente = document.getElementById('pdv-cliente')?.value || '';
-  const barbeiro = document.getElementById('pdv-barbeiro')?.value || '';
-  const total = cart.reduce((s,i)=>s+i.preco*i.qty,0);
-  const venda = {
-    id: DB.id(), ts: Date.now(),
-    data: new Date().toISOString(),
-    itens: cart.map(i=>({...i})),
-    cliente, barbeiro,
-    pgto: pgtoAtivo,
-    total
-  };
-
-  // Salvar venda
-  const vendas = DB.get('vendas',[]);
-  vendas.push(venda);
-  DB.set('vendas', vendas);
-
-  // Atualizar estoque se produto
-  const produtos = DB.get('produtos',[]);
-  cart.forEach(ci => {
-    if (ci.tipo==='produto') {
-      const p = produtos.find(p=>p.id===ci.id);
-      if (p) p.estoque = Math.max(0, (p.estoque||0) - ci.qty);
-    }
+function changeQty(id,delta){
+  const idx=cart.findIndex(i=>i.id===id);
+  if(idx<0) return;
+  cart[idx].qty+=delta;
+  if(cart[idx].qty<=0) cart.splice(idx,1);
+  renderPDV();
+}
+function importarComanda(id){
+  if(!id) return;
+  const comandas=DB.get('comandas',[]);
+  const c=comandas.find(x=>x.id===id);
+  if(!c||!c.itens?.length) return showToast('Comanda vazia','error');
+  c.itens.forEach(ci=>{
+    const ex=cart.find(i=>i.id===ci.id);
+    if(ex) ex.qty+=ci.qty; else cart.push({...ci});
   });
-  DB.set('produtos', produtos);
-
-  // Atualizar caixa
-  caixa.saldo = (caixa.saldo||0) + total;
-  DB.set('caixa', caixa);
-
-  // Lançamento automático
-  const lancs = DB.get('lancamentos',[]);
-  lancs.push({
-    id:DB.id(), ts:Date.now(), data:new Date().toISOString(),
-    tipo:'entrada', descricao:`Venda — ${cart.map(i=>i.nome).join(', ')}`,
-    valor:total, pgto:pgtoAtivo, categoria:'Venda', vendaId:venda.id
-  });
-  DB.set('lancamentos', lancs);
-
-  // Atualizar histórico do cliente
-  if (cliente) {
-    const clientes = DB.get('clientes',[]);
-    const c = clientes.find(c=>c.nome===cliente);
-    if (c) {
-      c.visitas = (c.visitas||0)+1;
-      c.gasto = (c.gasto||0)+total;
-      c.ultimaVisita = new Date().toISOString();
-      DB.set('clientes', clientes);
-    }
-  }
-
-  cart = [];
-  showToast(`Venda de ${fmt(total)} registrada!`, 'success');
+  // Preencher cliente
+  setTimeout(()=>{
+    const sel=document.getElementById('pdv-cliente');
+    if(sel){for(let o of sel.options){if(o.value===c.cliente){o.selected=true;break;}}}
+  },50);
+  showToast(`Comanda de ${c.cliente} importada!`,'success');
   renderPDV();
-  updateSidebar();
+}
+
+function cobrar(){
+  if(!cart.length) return;
+  const caixa=DB.get('caixa',{aberto:false,saldo:0});
+  if(!caixa.aberto){showToast('Abra o caixa primeiro!','error');goPanel('caixa');return;}
+  const cliente=document.getElementById('pdv-cliente')?.value||'';
+  const funcionario=document.getElementById('pdv-func')?.value||'';
+  const total=cart.reduce((s,i)=>s+i.preco*i.qty,0);
+
+  // Calcular comissões por item
+  const produtos=DB.get('produtos',[]);
+  const funcionarios=DB.get('funcionarios',[]);
+  const func=funcionarios.find(f=>f.nome===funcionario);
+  let comissaoTotal=0;
+  const itensComComissao=cart.map(ci=>{
+    let comissaoPct=0;
+    if(ci.tipo==='produto'){
+      const prod=produtos.find(p=>p.id===ci.id);
+      comissaoPct=prod?.comissao||0;
+    } else if(func){
+      // serviço: não tem comissão de produto, mas atendente tem comissão se aplicável
+      // barbeiros ganham sobre serviços também? — deixamos apenas produto por enquanto
+      comissaoPct=0;
+    }
+    const comissaoVal=(ci.preco*ci.qty)*(comissaoPct/100);
+    comissaoTotal+=comissaoVal;
+    return{...ci,comissaoPct,comissaoVal};
+  });
+
+  const venda={id:DB.id(),ts:Date.now(),data:new Date().toISOString(),itens:itensComComissao,cliente,funcionario,pgto:pgtoAtivo,total,comissaoTotal};
+  const vendas=DB.get('vendas',[]);vendas.push(venda);DB.set('vendas',vendas);
+
+  // Estoque
+  const prods=DB.get('produtos',[]);
+  cart.forEach(ci=>{if(ci.tipo==='produto'){const p=prods.find(x=>x.id===ci.id);if(p) p.estoque=Math.max(0,(p.estoque||0)-ci.qty);}});
+  DB.set('produtos',prods);
+
+  // Caixa
+  caixa.saldo=(caixa.saldo||0)+total;DB.set('caixa',caixa);
+
+  // Lançamento
+  const lancs=DB.get('lancamentos',[]);
+  lancs.push({id:DB.id(),ts:Date.now(),data:new Date().toISOString(),tipo:'entrada',descricao:`Venda — ${cart.map(i=>i.nome).join(', ')}`,valor:total,pgto:pgtoAtivo,categoria:'Venda',vendaId:venda.id,funcionario});
+  DB.set('lancamentos',lancs);
+
+  // Cliente histórico
+  if(cliente){const cs=DB.get('clientes',[]);const c=cs.find(x=>x.nome===cliente);if(c){c.visitas=(c.visitas||0)+1;c.gasto=(c.gasto||0)+total;c.ultimaVisita=new Date().toISOString();}DB.set('clientes',cs);}
+
+  // Fechar comanda se importada
+  const comandas=DB.get('comandas',[]);
+  const cc=comandas.find(c=>c.cliente===cliente&&c.status==='aberta');
+  if(cc){cc.status='fechada';cc.fechadaEm=Date.now();}
+  DB.set('comandas',comandas);
+
+  // Imprimir recibo
+  imprimirRecibo(venda);
+
+  cart=[];
+  showToast(`Venda de ${fmt(total)} registrada!`,'success');
+  renderPDV();updateSidebar();
+}
+
+// ============================================================
+// RECIBO
+// ============================================================
+function imprimirRecibo(venda){
+  const now=new Date(venda.ts||Date.now());
+  const dataFmt=`${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  const linhaH='─'.repeat(40);
+  const center=s=>{const pad=Math.max(0,Math.floor((40-s.length)/2));return ' '.repeat(pad)+s;};
+
+  const html=`
+    <div style="font-family:'Courier New',monospace;font-size:12px;color:#000;background:#fff;padding:20px;max-width:380px;margin:0 auto;line-height:1.6">
+      <div style="text-align:center;margin-bottom:12px">
+        <div style="font-size:18px;font-weight:900;letter-spacing:3px">O CORONEL</div>
+        <div style="font-size:10px;letter-spacing:2px">IMAGEM MASCULINA & POSICIONAMENTO</div>
+        <div style="font-size:10px;color:#555">Av. Pref. José Juvenal Mafra, 1681 — Navegantes/SC</div>
+        <div style="font-size:10px;color:#555">(47) 99211-5793</div>
+      </div>
+      <div style="border-top:1px dashed #000;border-bottom:1px dashed #000;padding:6px 0;margin:8px 0;font-size:10px;text-align:center">
+        RECIBO DE ATENDIMENTO
+      </div>
+      <div style="font-size:11px;margin-bottom:8px">
+        <div>Data: ${dataFmt}</div>
+        ${venda.cliente?`<div>Cliente: ${venda.cliente}</div>`:''}
+        ${venda.funcionario?`<div>Atendente: ${venda.funcionario}</div>`:''}
+      </div>
+      <div style="border-top:1px dashed #000;padding-top:8px;margin-bottom:8px">
+        <div style="font-size:10px;font-weight:700;margin-bottom:4px">ITENS</div>
+        ${venda.itens?.map(i=>`
+          <div style="display:flex;justify-content:space-between;font-size:11px;padding:2px 0">
+            <span>${i.nome}${i.qty>1?` x${i.qty}`:''}</span>
+            <span>${fmt(i.preco*i.qty)}</span>
+          </div>`).join('')||''}
+      </div>
+      <div style="border-top:1px dashed #000;padding-top:8px">
+        <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:900">
+          <span>TOTAL</span><span>${fmt(venda.total)}</span>
+        </div>
+        <div style="font-size:11px;margin-top:4px">Pagamento: ${venda.pgto}</div>
+      </div>
+      <div style="text-align:center;margin-top:12px;font-size:10px;border-top:1px dashed #000;padding-top:8px">
+        <div>Obrigado pela preferência!</div>
+        <div style="margin-top:4px">volte sempre 💈</div>
+      </div>
+    </div>`;
+
+  // Modal de recibo com opção de imprimir
+  openModal('Recibo',`
+    <div id="recibo-preview" style="background:#f9f9f9;border-radius:8px;padding:1rem;max-height:60vh;overflow-y:auto">${html}</div>
+    <div style="margin-top:1rem;font-size:0.8rem;color:var(--text2);text-align:center">Este recibo pode ser impresso para o cliente e para arquivamento</div>`,
+    [{label:'Fechar',action:'closeModal()'},{label:'🖨️ Imprimir',primary:true,action:`printRecibo(\`${html.replace(/`/g,"'")}\`)`}]
+  );
+}
+
+function printRecibo(html){
+  const w=window.open('','_blank','width=420,height=600');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>Recibo — O Coronel</title><style>*{margin:0;padding:0;box-sizing:border-box}body{background:#fff}@media print{@page{margin:10mm}}</style></head><body>${html}<script>window.onload=function(){window.print();setTimeout(()=>window.close(),500)}<\/script></body></html>`);
+  w.document.close();
+}
+
+// ============================================================
+// COMANDA
+// ============================================================
+function renderComanda(){
+  const comandas=DB.get('comandas',[]).sort((a,b)=>b.criadaEm-a.criadaEm);
+  const abertas=comandas.filter(c=>c.status==='aberta');
+  const fechadas=comandas.filter(c=>c.status==='fechada').slice(0,10);
+
+  document.getElementById('content').innerHTML=`
+    <div style="margin-bottom:1.25rem">
+      <div style="font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text3);margin-bottom:.75rem">Em atendimento — ${abertas.length} aberta${abertas.length!==1?'s':''}</div>
+      <div class="comandas-grid">
+        ${abertas.map(c=>comandaCard(c)).join('')}
+        <div class="comanda-nova" onclick="modalNovaComanda()">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span style="font-size:.85rem;font-weight:500">Nova comanda</span>
+        </div>
+      </div>
+    </div>
+    ${fechadas.length?`
+      <div style="font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text3);margin-bottom:.75rem">Fechadas hoje</div>
+      <div class="card" style="margin:0">
+        <div class="table-wrap"><table>
+          <thead><tr><th>Cliente</th><th>Atendente</th><th>Aberta</th><th>Itens</th><th>Total</th><th></th></tr></thead>
+          <tbody>
+            ${fechadas.map(c=>`<tr>
+              <td style="font-weight:500">${c.cliente}</td>
+              <td style="color:var(--text2)">${c.atendente||'—'}</td>
+              <td style="color:var(--text2)">${fmtDate(c.criadaEm)}</td>
+              <td style="font-size:.75rem;color:var(--text2)">${c.itens?.map(i=>i.nome).join(', ')||'—'}</td>
+              <td class="td-gold">${fmt(c.itens?.reduce((s,i)=>s+i.preco*i.qty,0)||0)}</td>
+              <td><div class="badge green">Fechada</div></td>
+            </tr>`).join('')}
+          </tbody>
+        </table></div>
+      </div>`:''
+    }`;
+}
+
+function comandaCard(c){
+  const total=c.itens?.reduce((s,i)=>s+i.preco*i.qty,0)||0;
+  const tempoAberta=Math.floor((Date.now()-c.criadaEm)/60000);
+  const tempo=tempoAberta<60?`${tempoAberta}min`:`${Math.floor(tempoAberta/60)}h${tempoAberta%60?tempoAberta%60+'min':''}`;
+  return`<div class="comanda-card aberta">
+    <div class="cc-header">
+      <div>
+        <div class="cc-nome">${c.cliente}</div>
+        <div class="cc-meta">⏱ ${tempo} · ${c.atendente||'—'}</div>
+      </div>
+      <div class="badge gold">Aberta</div>
+    </div>
+    <div class="cc-body">
+      ${c.itens?.length?c.itens.map(i=>`<div class="cc-item"><span>${i.nome}${i.qty>1?` ×${i.qty}`:''}</span><span>${fmt(i.preco*i.qty)}</span></div>`).join(''):'<div style="font-size:.78rem;color:var(--text3);padding:.25rem 0">Sem itens ainda</div>'}
+    </div>
+    <div class="cc-total"><div class="cc-total-label">Total acumulado</div><div class="cc-total-val">${fmt(total)}</div></div>
+    <div class="cc-actions">
+      <button class="cc-btn" onclick="modalAdicionarItem('${c.id}')">+ Item</button>
+      <button class="cc-btn" onclick="enviarParaPDV('${c.id}')">PDV</button>
+      <button class="cc-btn primary" onclick="fecharComanda('${c.id}')">Fechar</button>
+      <button class="cc-btn danger" onclick="excluirComanda('${c.id}')">✕</button>
+    </div>
+  </div>`;
+}
+
+function modalNovaComanda(){
+  const clientes=DB.get('clientes',[]);
+  const funcionarios=DB.get('funcionarios',[]).filter(f=>f.ativo);
+  openModal('Nova Comanda',`
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Nome do cliente</label>
+        <input type="text" id="m-nome" placeholder="Digite ou selecione" list="lista-clientes"/>
+        <datalist id="lista-clientes">${clientes.map(c=>`<option value="${c.nome}"/>`).join('')}</datalist>
+      </div>
+      <div class="form-group">
+        <label>Atendente</label>
+        <select id="m-func"><option value="">Não informado</option>${funcionarios.map(f=>`<option value="${f.nome}">${f.nome}</option>`).join('')}</select>
+      </div>
+    </div>`,
+    [{label:'Cancelar',action:'closeModal()'},{label:'Abrir comanda',primary:true,action:'salvarNovaComanda()'}]
+  );
+}
+
+function salvarNovaComanda(){
+  const nome=document.getElementById('m-nome')?.value.trim();
+  const atendente=document.getElementById('m-func')?.value||'';
+  if(!nome) return showToast('Digite o nome do cliente','error');
+  // Cadastrar cliente se não existir
+  const clientes=DB.get('clientes',[]);
+  if(!clientes.find(c=>c.nome===nome)){clientes.push({id:DB.id(),nome,visitas:0,gasto:0});DB.set('clientes',clientes);}
+  const comandas=DB.get('comandas',[]);
+  // Verificar se já tem comanda aberta para este cliente
+  if(comandas.find(c=>c.cliente===nome&&c.status==='aberta')){return showToast(`${nome} já tem comanda aberta!`,'error');}
+  comandas.push({id:DB.id(),cliente:nome,atendente,itens:[],status:'aberta',criadaEm:Date.now()});
+  DB.set('comandas',comandas);
+  closeModal();showToast(`Comanda de ${nome} aberta!`,'success');
+  renderComanda();updateSidebar();
+}
+
+function modalAdicionarItem(comandaId){
+  const servicos=DB.get('servicos',[]).filter(s=>s.ativo);
+  const produtos=DB.get('produtos',[]).filter(p=>p.ativo);
+  const todos=[...servicos.map(s=>({...s,tipo:'servico',icone:'✂️'})),...produtos.map(p=>({...p,tipo:'produto',icone:p.categoria==='Bebida'?'🥤':'🧴'}))];
+  openModal('Adicionar à Comanda',`
+    <div class="form-group" style="margin-bottom:.85rem">
+      <label>Buscar</label>
+      <input type="text" id="m-busca" placeholder="Digite o nome..." oninput="filtrarItensModal('${comandaId}')"/>
+    </div>
+    <div id="itens-modal" style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;max-height:320px;overflow-y:auto">
+      ${todos.map(item=>`<div class="item-card" onclick="addItemComanda('${comandaId}','${item.id}','${item.nome.replace(/'/g,"\\'")}',${item.preco},'${item.tipo}')" style="padding:.65rem;text-align:left">
+        <div style="font-size:1rem;margin-bottom:.2rem">${item.icone}</div>
+        <div style="font-size:.78rem;font-weight:600;line-height:1.2">${item.nome}</div>
+        <div style="font-size:.82rem;color:var(--gold);font-family:'Playfair Display',serif;margin-top:.2rem">${fmt(item.preco)}</div>
+      </div>`).join('')}
+    </div>`,
+    [{label:'Fechar',action:'closeModal()'}]
+  );
+  // Store todos for filter
+  window._todosItens=todos;
+  window._comandaIdAtual=comandaId;
+}
+
+function filtrarItensModal(){
+  const q=document.getElementById('m-busca')?.value.toLowerCase()||'';
+  const filtrados=(window._todosItens||[]).filter(i=>i.nome.toLowerCase().includes(q));
+  const el=document.getElementById('itens-modal');
+  if(el) el.innerHTML=filtrados.map(item=>`<div class="item-card" onclick="addItemComanda('${window._comandaIdAtual}','${item.id}','${item.nome.replace(/'/g,"\\'")}',${item.preco},'${item.tipo}')" style="padding:.65rem;text-align:left"><div style="font-size:1rem;margin-bottom:.2rem">${item.icone}</div><div style="font-size:.78rem;font-weight:600;line-height:1.2">${item.nome}</div><div style="font-size:.82rem;color:var(--gold);font-family:'Playfair Display',serif;margin-top:.2rem">${fmt(item.preco)}</div></div>`).join('');
+}
+
+function addItemComanda(comandaId,itemId,nome,preco,tipo){
+  const comandas=DB.get('comandas',[]);
+  const c=comandas.find(x=>x.id===comandaId);
+  if(!c) return;
+  const ex=c.itens.find(i=>i.id===itemId);
+  if(ex) ex.qty++; else c.itens.push({id:itemId,nome,preco,tipo,qty:1});
+  DB.set('comandas',comandas);
+  closeModal();
+  showToast(`${nome} adicionado à comanda!`,'success');
+  renderComanda();updateSidebar();
+}
+
+function enviarParaPDV(id){
+  const comandas=DB.get('comandas',[]);
+  const c=comandas.find(x=>x.id===id);
+  if(!c||!c.itens?.length){showToast('Comanda sem itens','error');return;}
+  // Importar itens para o carrinho do PDV
+  cart=[];
+  c.itens.forEach(ci=>{cart.push({...ci});});
+  goPanel('pdv');
+  setTimeout(()=>{
+    const sel=document.getElementById('pdv-cliente');
+    if(sel){for(let o of sel.options){if(o.value===c.cliente){o.selected=true;break;}}}
+    showToast(`Comanda de ${c.cliente} carregada no PDV!`,'success');
+  },100);
+}
+
+function fecharComanda(id){
+  const comandas=DB.get('comandas',[]);
+  const c=comandas.find(x=>x.id===id);
+  if(!c) return;
+  // Perguntar se quer ir para PDV ou fechar direto
+  openModal('Fechar Comanda',`
+    <div style="text-align:center;padding:.5rem 0">
+      <div style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;margin-bottom:.5rem">${c.cliente}</div>
+      <div style="font-size:.85rem;color:var(--text2);margin-bottom:1rem">${c.itens?.length||0} item${c.itens?.length!==1?'s':''} · ${fmt(c.itens?.reduce((s,i)=>s+i.preco*i.qty,0)||0)}</div>
+      <div style="font-size:.85rem;color:var(--text2)">Como deseja fechar esta comanda?</div>
+    </div>`,
+    [
+      {label:'Cancelar',action:'closeModal()'},
+      {label:'Ir para PDV',action:`closeModal();enviarParaPDV('${id}')`},
+    ]
+  );
+}
+
+function excluirComanda(id){
+  if(!confirm('Excluir esta comanda?')) return;
+  DB.set('comandas',DB.get('comandas',[]).filter(c=>c.id!==id));
+  showToast('Comanda excluída','');
+  renderComanda();updateSidebar();
 }
 
 // ============================================================
 // CAIXA
 // ============================================================
-function renderCaixa() {
-  const caixa = DB.get('caixa',{aberto:false,saldo:0,abertura:0});
-  const vendas = DB.get('vendas',[]);
-  const lancs = DB.get('lancamentos',[]);
-  const t = today();
-  const receitaHoje = vendas.filter(v=>v.data?.startsWith(t)).reduce((s,v)=>s+v.total,0);
-  const saidasHoje = lancs.filter(l=>l.tipo==='saida'&&l.data?.startsWith(t)).reduce((s,l)=>s+l.valor,0);
-
-  document.getElementById('content').innerHTML = `
+function renderCaixa(){
+  const caixa=DB.get('caixa',{aberto:false,saldo:0});
+  const vendas=DB.get('vendas',[]),lancs=DB.get('lancamentos',[]),t=today();
+  const rh=vendas.filter(v=>v.data?.startsWith(t)).reduce((s,v)=>s+v.total,0);
+  const dh=lancs.filter(l=>l.tipo==='saida'&&l.data?.startsWith(t)).reduce((s,l)=>s+l.valor,0);
+  document.getElementById('content').innerHTML=`
     <div style="max-width:700px;margin:0 auto">
       <div class="grid-2" style="margin-bottom:1rem">
-        <div class="stat-card green">
-          <div class="sc-label">Entradas hoje</div>
-          <div class="sc-val">${fmt(receitaHoje)}</div>
-        </div>
-        <div class="stat-card red">
-          <div class="sc-label">Saídas hoje</div>
-          <div class="sc-val">${fmt(saidasHoje)}</div>
-        </div>
+        <div class="stat-card green"><div class="sc-label">Entradas hoje</div><div class="sc-val">${fmt(rh)}</div></div>
+        <div class="stat-card red"><div class="sc-label">Saídas hoje</div><div class="sc-val">${fmt(dh)}</div></div>
       </div>
-
-      <div class="caixa-card">
-        <div style="font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text3)">Saldo em caixa</div>
+      <div class="card" style="text-align:center;max-width:400px;margin:0 auto 1rem">
+        <div style="font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text3)">Saldo em caixa</div>
         <div class="caixa-big">${fmt(caixa.saldo||0)}</div>
-        <div style="font-size:0.85rem;color:var(--text2);margin-bottom:1.5rem">
-          Status: <strong style="color:${caixa.aberto?'var(--green)':'var(--red)'}">${caixa.aberto?'Aberto':'Fechado'}</strong>
-        </div>
-
-        ${!caixa.aberto ? `
-          <div class="form-group" style="margin-bottom:1rem;text-align:left">
-            <label>Troco inicial (opcional)</label>
-            <input type="number" id="val-abertura" placeholder="0,00" min="0" step="0.01"/>
-          </div>
-          <button class="btn-cobrar" onclick="abrirCaixa()">Abrir Caixa</button>
-        ` : `
-          <button class="btn-cobrar" onclick="fecharCaixa()" style="background:var(--red)">Fechar Caixa do Dia</button>
-        `}
+        <div style="font-size:.85rem;color:var(--text2);margin-bottom:1.5rem">Status: <strong style="color:${caixa.aberto?'var(--green)':'var(--red)'}">${caixa.aberto?'Aberto':'Fechado'}</strong></div>
+        ${!caixa.aberto?`<div class="form-group" style="margin-bottom:1rem;text-align:left"><label>Troco inicial (opcional)</label><input type="number" id="val-abertura" placeholder="0,00" min="0" step="0.01"/></div><button class="btn-cobrar" onclick="abrirCaixa()">Abrir Caixa</button>`:`<button class="btn-cobrar" onclick="fecharCaixa()" style="background:var(--red)">Fechar Caixa do Dia</button>`}
       </div>
-
-      ${caixa.aberto ? `
-        <div class="card">
-          <div class="card-title">Lançar despesa / saída manual</div>
-          <div class="form-grid cols-2">
-            <div class="form-group">
-              <label>Descrição</label>
-              <input type="text" id="saida-desc" placeholder="Ex: Aluguel, material..."/>
-            </div>
-            <div class="form-group">
-              <label>Valor (R$)</label>
-              <input type="number" id="saida-val" placeholder="0,00" min="0" step="0.01"/>
-            </div>
-            <div class="form-group">
-              <label>Forma de pagamento</label>
-              <select id="saida-pgto">
-                <option>Dinheiro</option><option>Pix</option><option>Débito</option><option>Crédito</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Categoria</label>
-              <select id="saida-cat">
-                <option>Operacional</option><option>Produto/Estoque</option><option>Marketing</option><option>Manutenção</option><option>Pessoal</option><option>Outros</option>
-              </select>
-            </div>
-          </div>
-          <button class="tb-btn primary" style="margin-top:1rem" onclick="lancarSaida()">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Registrar saída
-          </button>
-        </div>` : ''}
+      ${caixa.aberto?`<div class="card"><div class="card-title">Registrar saída / despesa</div><div class="form-grid cols-2">
+        <div class="form-group"><label>Descrição</label><input type="text" id="saida-desc" placeholder="Ex: Aluguel, material..."/></div>
+        <div class="form-group"><label>Valor (R$)</label><input type="number" id="saida-val" placeholder="0,00" min="0" step="0.01"/></div>
+        <div class="form-group"><label>Pagamento</label><select id="saida-pgto"><option>Dinheiro</option><option>Pix</option><option>Débito</option><option>Crédito</option></select></div>
+        <div class="form-group"><label>Categoria</label><select id="saida-cat"><option>Operacional</option><option>Produto/Estoque</option><option>Marketing</option><option>Manutenção</option><option>Pessoal</option><option>Outros</option></select></div>
+      </div><button class="tb-btn primary" style="margin-top:1rem" onclick="lancarSaida()">Registrar saída</button></div>`:''}
     </div>`;
 }
-
-function abrirCaixa() {
-  const val = parseFloat(document.getElementById('val-abertura')?.value||0)||0;
-  const caixa = DB.get('caixa',{});
-  caixa.aberto = true;
-  caixa.saldo = val;
-  caixa.abertura = val;
-  caixa.aberturaTs = Date.now();
-  DB.set('caixa', caixa);
-  showToast('Caixa aberto!','success');
-  renderCaixa(); updateSidebar();
-}
-
-function fecharCaixa() {
-  if (!confirm('Fechar o caixa do dia? Isso vai zerar o saldo.')) return;
-  const caixa = DB.get('caixa',{});
-  // Salvar histórico de fechamento
-  const hist = DB.get('historico_caixa',[]);
-  hist.push({
-    data: today(), saldo: caixa.saldo,
-    abertura: caixa.abertura, fechamentoTs: Date.now()
-  });
-  DB.set('historico_caixa', hist);
-  caixa.aberto = false;
-  caixa.saldo = 0;
-  DB.set('caixa', caixa);
-  showToast('Caixa fechado!','');
-  renderCaixa(); updateSidebar();
-}
-
-function lancarSaida() {
-  const desc = document.getElementById('saida-desc')?.value.trim();
-  const val = parseFloat(document.getElementById('saida-val')?.value||0);
-  const pgto = document.getElementById('saida-pgto')?.value;
-  const cat = document.getElementById('saida-cat')?.value;
-  if (!desc || !val) return showToast('Preencha descrição e valor','error');
-  const lancs = DB.get('lancamentos',[]);
-  lancs.push({
-    id:DB.id(), ts:Date.now(), data:new Date().toISOString(),
-    tipo:'saida', descricao:desc, valor:val, pgto, categoria:cat
-  });
-  DB.set('lancamentos', lancs);
-  const caixa = DB.get('caixa',{saldo:0});
-  caixa.saldo = Math.max(0, (caixa.saldo||0) - val);
-  DB.set('caixa', caixa);
-  showToast(`Saída de ${fmt(val)} registrada`,'');
-  renderCaixa(); updateSidebar();
-}
+function abrirCaixa(){const v=parseFloat(document.getElementById('val-abertura')?.value||0)||0;const c=DB.get('caixa',{});c.aberto=true;c.saldo=v;c.abertura=v;c.aberturaTs=Date.now();DB.set('caixa',c);showToast('Caixa aberto!','success');renderCaixa();updateSidebar();}
+function fecharCaixa(){if(!confirm('Fechar o caixa do dia?')) return;const c=DB.get('caixa',{});const h=DB.get('historico_caixa',[]);h.push({data:today(),saldo:c.saldo,abertura:c.abertura,fechamentoTs:Date.now()});DB.set('historico_caixa',h);c.aberto=false;c.saldo=0;DB.set('caixa',c);showToast('Caixa fechado!','');renderCaixa();updateSidebar();}
+function lancarSaida(){const desc=document.getElementById('saida-desc')?.value.trim();const val=parseFloat(document.getElementById('saida-val')?.value||0);const pgto=document.getElementById('saida-pgto')?.value;const cat=document.getElementById('saida-cat')?.value;if(!desc||!val) return showToast('Preencha descrição e valor','error');const l=DB.get('lancamentos',[]);l.push({id:DB.id(),ts:Date.now(),data:new Date().toISOString(),tipo:'saida',descricao:desc,valor:val,pgto,categoria:cat});DB.set('lancamentos',l);const c=DB.get('caixa',{saldo:0});c.saldo=Math.max(0,(c.saldo||0)-val);DB.set('caixa',c);showToast(`Saída de ${fmt(val)} registrada`,'');renderCaixa();updateSidebar();}
 
 // ============================================================
-// FLUXO DE CAIXA
+// FLUXO
 // ============================================================
-function renderFluxo() {
-  const lancs = DB.get('lancamentos',[]).sort((a,b)=>b.ts-a.ts);
-  const t = today();
-  const hoje = lancs.filter(l=>l.data?.startsWith(t));
-  const entradas = hoje.filter(l=>l.tipo==='entrada').reduce((s,l)=>s+l.valor,0);
-  const saidas = hoje.filter(l=>l.tipo==='saida').reduce((s,l)=>s+l.valor,0);
-
-  document.getElementById('content').innerHTML = `
-    <div class="stats-row" style="grid-template-columns:repeat(3,1fr)">
-      <div class="stat-card green">
-        <div class="sc-label">Entradas hoje</div>
-        <div class="sc-val">${fmt(entradas)}</div>
-      </div>
-      <div class="stat-card red">
-        <div class="sc-label">Saídas hoje</div>
-        <div class="sc-val">${fmt(saidas)}</div>
-      </div>
-      <div class="stat-card ${entradas-saidas>=0?'gold':'red'}">
-        <div class="sc-label">Saldo hoje</div>
-        <div class="sc-val">${fmt(entradas-saidas)}</div>
-      </div>
+function renderFluxo(){
+  const lancs=DB.get('lancamentos',[]).sort((a,b)=>b.ts-a.ts);
+  const t=today();
+  const h=lancs.filter(l=>l.data?.startsWith(t));
+  const ent=h.filter(l=>l.tipo==='entrada').reduce((s,l)=>s+l.valor,0);
+  const sai=h.filter(l=>l.tipo==='saida').reduce((s,l)=>s+l.valor,0);
+  document.getElementById('content').innerHTML=`
+    <div class="stats-row cols3">
+      <div class="stat-card green"><div class="sc-label">Entradas hoje</div><div class="sc-val">${fmt(ent)}</div></div>
+      <div class="stat-card red"><div class="sc-label">Saídas hoje</div><div class="sc-val">${fmt(sai)}</div></div>
+      <div class="stat-card ${ent-sai>=0?'gold':'red'}"><div class="sc-label">Saldo hoje</div><div class="sc-val">${fmt(ent-sai)}</div></div>
     </div>
-
     <div class="card">
-      <div class="card-title">
-        Todos os lançamentos
-        <div class="card-title-actions">
-          <select onchange="filtrarFluxo(this.value)" style="height:30px;font-size:0.75rem;padding:0 0.5rem;width:auto">
-            <option value="">Todos</option>
-            <option value="entrada">Entradas</option>
-            <option value="saida">Saídas</option>
-          </select>
-        </div>
-      </div>
+      <div class="card-title">Lançamentos<div><select onchange="filtrarFluxo(this.value)" style="height:28px;font-size:.75rem;padding:0 .5rem;width:auto;background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text)"><option value="">Todos</option><option value="entrada">Entradas</option><option value="saida">Saídas</option></select></div></div>
       <div id="fluxo-lista">
-        ${lancs.length ? lancs.map(l=>`
-          <div class="fluxo-item">
-            <div class="fi-dot" style="background:${l.tipo==='entrada'?'var(--green)':'var(--red)'}"></div>
-            <div class="fi-info">
-              <div class="fi-desc">${l.descricao}</div>
-              <div class="fi-meta">${fmtDate(l.ts)} · ${l.categoria||''} · ${l.pgto||''}</div>
-            </div>
-            <div class="fi-val ${l.tipo}">${l.tipo==='entrada'?'+':'-'}${fmt(l.valor)}</div>
-            <div class="row-actions">
-              <div class="row-btn danger" onclick="deletarLancamento('${l.id}')">
-                <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-              </div>
-            </div>
-          </div>`).join('') : '<div class="empty"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><p>Nenhum lançamento ainda</p></div>'}
+        ${lancs.length?lancs.map(l=>`<div class="fluxo-item"><div class="fi-dot" style="background:${l.tipo==='entrada'?'var(--green)':'var(--red)'}"></div><div class="fi-info"><div class="fi-desc">${l.descricao}</div><div class="fi-meta">${fmtDate(l.ts)} · ${l.categoria||''} · ${l.pgto||''}${l.funcionario?' · '+l.funcionario:''}</div></div><div class="fi-val ${l.tipo}">${l.tipo==='entrada'?'+':'-'}${fmt(l.valor)}</div><div class="row-actions"><div class="row-btn danger" onclick="deletarLancamento('${l.id}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div></div></div>`).join(''):'<div class="empty"><p>Nenhum lançamento</p></div>'}
       </div>
     </div>`;
 }
+function filtrarFluxo(tipo){const lancs=DB.get('lancamentos',[]).filter(l=>!tipo||l.tipo===tipo).sort((a,b)=>b.ts-a.ts);document.getElementById('fluxo-lista').innerHTML=lancs.map(l=>`<div class="fluxo-item"><div class="fi-dot" style="background:${l.tipo==='entrada'?'var(--green)':'var(--red)'}"></div><div class="fi-info"><div class="fi-desc">${l.descricao}</div><div class="fi-meta">${fmtDate(l.ts)} · ${l.categoria||''} · ${l.pgto||''}${l.funcionario?' · '+l.funcionario:''}</div></div><div class="fi-val ${l.tipo}">${l.tipo==='entrada'?'+':'-'}${fmt(l.valor)}</div><div class="row-actions"><div class="row-btn danger" onclick="deletarLancamento('${l.id}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div></div></div>`).join('')||'<div class="empty"><p>Nenhum lançamento</p></div>';}
+function deletarLancamento(id){if(!confirm('Excluir?')) return;DB.set('lancamentos',DB.get('lancamentos',[]).filter(l=>l.id!==id));showToast('Excluído','');renderFluxo();}
+function modalLancamento(){openModal('Lançamento Manual',`<div class="form-grid"><div class="form-group"><label>Tipo</label><select id="m-tipo"><option value="entrada">Entrada</option><option value="saida">Saída</option></select></div><div class="form-group"><label>Descrição</label><input type="text" id="m-desc" placeholder="Ex: Venda avulsa, Aluguel..."/></div><div class="form-group"><label>Valor (R$)</label><input type="number" id="m-val" placeholder="0,00" min="0" step="0.01"/></div><div class="form-group"><label>Categoria</label><select id="m-cat"><option>Venda</option><option>Serviço</option><option>Operacional</option><option>Produto/Estoque</option><option>Marketing</option><option>Pessoal</option><option>Outros</option></select></div><div class="form-group"><label>Pagamento</label><select id="m-pgto"><option>Dinheiro</option><option>Pix</option><option>Débito</option><option>Crédito</option></select></div></div>`,[{label:'Cancelar',action:'closeModal()'},{label:'Salvar',primary:true,action:'salvarLancamento()'}]);}
+function salvarLancamento(){const tipo=document.getElementById('m-tipo')?.value;const desc=document.getElementById('m-desc')?.value.trim();const val=parseFloat(document.getElementById('m-val')?.value||0);const cat=document.getElementById('m-cat')?.value;const pgto=document.getElementById('m-pgto')?.value;if(!desc||!val) return showToast('Preencha todos os campos','error');const l=DB.get('lancamentos',[]);l.push({id:DB.id(),ts:Date.now(),data:new Date().toISOString(),tipo,descricao:desc,valor:val,categoria:cat,pgto});DB.set('lancamentos',l);const c=DB.get('caixa',{saldo:0});if(tipo==='entrada') c.saldo=(c.saldo||0)+val; else c.saldo=Math.max(0,(c.saldo||0)-val);DB.set('caixa',c);closeModal();showToast('Lançamento salvo!','success');renderFluxo();updateSidebar();}
 
-function filtrarFluxo(tipo) {
-  const lancs = DB.get('lancamentos',[]).filter(l=>!tipo||l.tipo===tipo).sort((a,b)=>b.ts-a.ts);
-  document.getElementById('fluxo-lista').innerHTML = lancs.map(l=>`
-    <div class="fluxo-item">
-      <div class="fi-dot" style="background:${l.tipo==='entrada'?'var(--green)':'var(--red)'}"></div>
-      <div class="fi-info">
-        <div class="fi-desc">${l.descricao}</div>
-        <div class="fi-meta">${fmtDate(l.ts)} · ${l.categoria||''} · ${l.pgto||''}</div>
-      </div>
-      <div class="fi-val ${l.tipo}">${l.tipo==='entrada'?'+':'-'}${fmt(l.valor)}</div>
-      <div class="row-actions">
-        <div class="row-btn danger" onclick="deletarLancamento('${l.id}')">
-          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-        </div>
-      </div>
-    </div>`).join('') || '<div class="empty"><p>Nenhum lançamento</p></div>';
-}
+// ============================================================
+// COMISSÕES
+// ============================================================
+function renderComissoes(){
+  const funcionarios=DB.get('funcionarios',[]).filter(f=>f.ativo);
+  const vendas=DB.get('vendas',[]);
+  const now=new Date();
+  const mesInicio=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-01`;
+  const vendasMes=vendas.filter(v=>v.data>=mesInicio);
 
-function deletarLancamento(id) {
-  if (!confirm('Excluir este lançamento?')) return;
-  DB.set('lancamentos', DB.get('lancamentos',[]).filter(l=>l.id!==id));
-  showToast('Lançamento excluído','');
-  renderFluxo();
-}
+  const porFunc=funcionarios.map(f=>{
+    const fVendas=vendasMes.filter(v=>v.funcionario===f.nome);
+    // Comissão sobre produtos
+    let comissaoProd=0;
+    fVendas.forEach(v=>{
+      v.itens?.forEach(i=>{
+        if(i.tipo==='produto') comissaoProd+=i.comissaoVal||0;
+      });
+    });
+    // Para barbeiros: comissão sobre serviços também
+    let comissaoServ=0;
+    if(f.cargo==='Barbeiro'||f.comissao>=40){
+      fVendas.forEach(v=>{
+        v.itens?.forEach(i=>{
+          if(i.tipo==='servico') comissaoServ+=(i.preco*i.qty)*(f.comissao/100);
+        });
+      });
+    }
+    const totalFat=fVendas.reduce((s,v)=>s+v.total,0);
+    const totalComissao=comissaoProd+comissaoServ;
+    return{...f,atend:fVendas.length,faturamento:totalFat,comissaoProd,comissaoServ,totalComissao};
+  });
 
-function modalLancamento() {
-  openModal('Lançamento Manual', `
-    <div class="form-grid">
-      <div class="form-group">
-        <label>Tipo</label>
-        <select id="m-tipo"><option value="entrada">Entrada</option><option value="saida">Saída</option></select>
-      </div>
-      <div class="form-group">
-        <label>Descrição</label>
-        <input type="text" id="m-desc" placeholder="Ex: Venda avulsa, Aluguel..."/>
-      </div>
-      <div class="form-group">
-        <label>Valor (R$)</label>
-        <input type="number" id="m-val" placeholder="0,00" min="0" step="0.01"/>
-      </div>
-      <div class="form-group">
-        <label>Categoria</label>
-        <select id="m-cat">
-          <option>Venda</option><option>Serviço</option><option>Operacional</option>
-          <option>Produto/Estoque</option><option>Marketing</option><option>Pessoal</option><option>Outros</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Forma de pagamento</label>
-        <select id="m-pgto"><option>Dinheiro</option><option>Pix</option><option>Débito</option><option>Crédito</option></select>
-      </div>
-    </div>`,
-    [{label:'Cancelar',action:'closeModal()'},{label:'Salvar',primary:true,action:'salvarLancamento()'}]
-  );
-}
+  const totalComissoes=porFunc.reduce((s,f)=>s+f.totalComissao,0);
 
-function salvarLancamento() {
-  const tipo = document.getElementById('m-tipo')?.value;
-  const desc = document.getElementById('m-desc')?.value.trim();
-  const val = parseFloat(document.getElementById('m-val')?.value||0);
-  const cat = document.getElementById('m-cat')?.value;
-  const pgto = document.getElementById('m-pgto')?.value;
-  if (!desc||!val) return showToast('Preencha todos os campos','error');
-  const lancs = DB.get('lancamentos',[]);
-  lancs.push({id:DB.id(),ts:Date.now(),data:new Date().toISOString(),tipo,descricao:desc,valor:val,categoria:cat,pgto});
-  DB.set('lancamentos',lancs);
-  const caixa = DB.get('caixa',{saldo:0});
-  if (tipo==='entrada') caixa.saldo=(caixa.saldo||0)+val;
-  else caixa.saldo=Math.max(0,(caixa.saldo||0)-val);
-  DB.set('caixa',caixa);
-  closeModal(); showToast('Lançamento salvo!','success');
-  renderFluxo(); updateSidebar();
+  document.getElementById('content').innerHTML=`
+    <div style="margin-bottom:.5rem;font-size:.78rem;color:var(--text2)">Período: mês atual (${['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][now.getMonth()]}/${now.getFullYear()})</div>
+    <div class="stats-row cols3" style="margin-bottom:1.25rem">
+      <div class="stat-card purple"><div class="sc-label">Total comissões</div><div class="sc-val">${fmt(totalComissoes)}</div><div class="sc-sub">a pagar no período</div></div>
+      <div class="stat-card gold"><div class="sc-label">Funcionários ativos</div><div class="sc-val">${funcionarios.length}</div></div>
+      <div class="stat-card green"><div class="sc-label">Faturamento mês</div><div class="sc-val">${fmt(vendasMes.reduce((s,v)=>s+v.total,0))}</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Comissões por funcionário — mês atual</div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Funcionário</th><th>Cargo</th><th>%</th><th>Atend.</th><th>Faturou</th><th>Comissão Serviços</th><th>Comissão Produtos</th><th>Total a receber</th></tr></thead>
+        <tbody>
+          ${porFunc.length?porFunc.map(f=>`<tr>
+            <td style="font-weight:500">${f.nome}</td>
+            <td><div class="badge ${f.cargo==='Barbeiro'?'gold':'blue'}">${f.cargo}</div></td>
+            <td style="color:var(--text2)">${f.comissao}%</td>
+            <td>${f.atend}</td>
+            <td style="color:var(--text2)">${fmt(f.faturamento)}</td>
+            <td class="td-green">${fmt(f.comissaoServ)}</td>
+            <td class="td-green">${fmt(f.comissaoProd)}</td>
+            <td style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--purple)">${fmt(f.totalComissao)}</td>
+          </tr>`).join(''):'<tr><td colspan="8"><div class="empty"><p>Nenhum funcionário com vendas</p></div></td></tr>'}
+        </tbody>
+      </table></div>
+    </div>
+    <div class="card" style="background:var(--purple-dim);border-color:rgba(155,89,182,0.2)">
+      <div style="font-size:.78rem;color:var(--text2);line-height:1.7">
+        <strong style="color:var(--text)">Regras de comissão ativas:</strong><br/>
+        • <strong>Barbeiros (40%)</strong>: comissão sobre serviços prestados + comissão sobre produtos de barbearia vendidos<br/>
+        • <strong>Atendentes/Barmans (10%)</strong>: comissão sobre todos os produtos e bebidas vendidos<br/>
+        • Para ajustar o percentual de cada funcionário, edite em <strong>Funcionários</strong>
+      </div>
+    </div>`;
 }
 
 // ============================================================
 // SERVIÇOS
 // ============================================================
-function renderServicos() {
-  const servicos = DB.get('servicos',[]);
-  document.getElementById('content').innerHTML = `
-    <div class="card">
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Serviço</th><th>Barbeiro</th><th>Duração</th><th>Preço</th><th>Status</th><th></th></tr></thead>
-          <tbody>
-            ${servicos.length ? servicos.map(s=>`<tr>
-              <td style="font-weight:500">${s.nome}</td>
-              <td style="color:var(--text2)">${s.barbeiro||'—'}</td>
-              <td>${s.duracao||30}min</td>
-              <td class="td-gold">${fmt(s.preco)}</td>
-              <td><div class="badge ${s.ativo?'green':'red'}">${s.ativo?'Ativo':'Inativo'}</div></td>
-              <td><div class="row-actions">
-                <div class="row-btn" onclick="modalServico('${s.id}')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
-                <div class="row-btn danger" onclick="excluir('servicos','${s.id}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div>
-              </div></td>
-            </tr>`).join('') : '<tr><td colspan="6"><div class="empty"><p>Nenhum serviço cadastrado</p></div></td></tr>'}
-          </tbody>
-        </table>
-      </div>
-    </div>`;
+function renderServicos(){
+  const servicos=DB.get('servicos',[]);
+  document.getElementById('content').innerHTML=`<div class="card"><div class="table-wrap"><table><thead><tr><th>Serviço</th><th>Funcionário</th><th>Duração</th><th>Preço</th><th>Status</th><th></th></tr></thead><tbody>${servicos.length?servicos.map(s=>`<tr><td style="font-weight:500">${s.nome}</td><td style="color:var(--text2)">${s.funcionario||'—'}</td><td>${s.duracao||30}min</td><td class="td-gold">${fmt(s.preco)}</td><td><div class="badge ${s.ativo?'green':'red'}">${s.ativo?'Ativo':'Inativo'}</div></td><td><div class="row-actions"><div class="row-btn" onclick="modalServico('${s.id}')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><div class="row-btn danger" onclick="excluir('servicos','${s.id}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div></div></td></tr>`).join(''):'<tr><td colspan="6"><div class="empty"><p>Nenhum serviço</p></div></td></tr>'}</tbody></table></div></div>`;
 }
-
-function modalServico(id) {
-  const servicos = DB.get('servicos',[]);
-  const s = servicos.find(x=>x.id===id) || {};
-  const barbeiros = DB.get('barbeiros',[]).map(b=>b.nome);
-  openModal(id?'Editar Serviço':'Novo Serviço', `
-    <div class="form-grid">
-      <div class="form-group">
-        <label>Nome do serviço</label>
-        <input type="text" id="m-nome" value="${s.nome||''}" placeholder="Ex: Corte + Barba"/>
-      </div>
-      <div class="form-grid cols-2">
-        <div class="form-group">
-          <label>Preço (R$)</label>
-          <input type="number" id="m-preco" value="${s.preco||''}" placeholder="0,00" min="0" step="0.01"/>
-        </div>
-        <div class="form-group">
-          <label>Duração (min)</label>
-          <input type="number" id="m-dur" value="${s.duracao||30}" placeholder="30"/>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Barbeiro</label>
-        <select id="m-barb">
-          <option value="Equipe"${!s.barbeiro||s.barbeiro==='Equipe'?' selected':''}>Equipe (qualquer)</option>
-          ${barbeiros.map(b=>`<option value="${b}"${s.barbeiro===b?' selected':''}>${b}</option>`).join('')}
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Status</label>
-        <select id="m-ativo"><option value="1"${s.ativo!==false?' selected':''}>Ativo</option><option value="0"${s.ativo===false?' selected':''}>Inativo</option></select>
-      </div>
-    </div>`,
-    [{label:'Cancelar',action:'closeModal()'},{label:'Salvar',primary:true,action:`salvarServico('${id||''}')`}]
-  );
-}
-
-function salvarServico(id) {
-  const nome = document.getElementById('m-nome')?.value.trim();
-  const preco = parseFloat(document.getElementById('m-preco')?.value||0);
-  const duracao = parseInt(document.getElementById('m-dur')?.value||30);
-  const barbeiro = document.getElementById('m-barb')?.value;
-  const ativo = document.getElementById('m-ativo')?.value === '1';
-  if (!nome||!preco) return showToast('Preencha nome e preço','error');
-  const servicos = DB.get('servicos',[]);
-  if (id) {
-    const idx = servicos.findIndex(s=>s.id===id);
-    if (idx>=0) servicos[idx] = {...servicos[idx], nome, preco, duracao, barbeiro, ativo};
-  } else {
-    servicos.push({id:DB.id(), nome, preco, duracao, barbeiro, ativo});
-  }
-  DB.set('servicos', servicos);
-  closeModal(); showToast('Serviço salvo!','success'); renderServicos();
-}
+function modalServico(id){const s=DB.get('servicos',[]).find(x=>x.id===id)||{};const funcs=DB.get('funcionarios',[]).map(f=>f.nome);openModal(id?'Editar Serviço':'Novo Serviço',`<div class="form-grid"><div class="form-group"><label>Nome</label><input type="text" id="m-nome" value="${s.nome||''}" placeholder="Ex: Corte + Barba"/></div><div class="form-grid cols-2"><div class="form-group"><label>Preço (R$)</label><input type="number" id="m-preco" value="${s.preco||''}" step="0.01"/></div><div class="form-group"><label>Duração (min)</label><input type="number" id="m-dur" value="${s.duracao||30}"/></div></div><div class="form-group"><label>Funcionário</label><select id="m-func"><option value="Equipe">Equipe</option>${funcs.map(f=>`<option value="${f}"${s.funcionario===f?' selected':''}>${f}</option>`).join('')}</select></div><div class="form-group"><label>Status</label><select id="m-ativo"><option value="1"${s.ativo!==false?' selected':''}>Ativo</option><option value="0"${s.ativo===false?' selected':''}>Inativo</option></select></div></div>`,[{label:'Cancelar',action:'closeModal()'},{label:'Salvar',primary:true,action:`salvarServico('${id||''}')`}]);}
+function salvarServico(id){const nome=document.getElementById('m-nome')?.value.trim();const preco=parseFloat(document.getElementById('m-preco')?.value||0);const duracao=parseInt(document.getElementById('m-dur')?.value||30);const funcionario=document.getElementById('m-func')?.value;const ativo=document.getElementById('m-ativo')?.value==='1';if(!nome||!preco) return showToast('Preencha nome e preço','error');const s=DB.get('servicos',[]);if(id){const i=s.findIndex(x=>x.id===id);if(i>=0) s[i]={...s[i],nome,preco,duracao,funcionario,ativo};}else s.push({id:DB.id(),nome,preco,duracao,funcionario,ativo});DB.set('servicos',s);closeModal();showToast('Salvo!','success');renderServicos();}
 
 // ============================================================
 // PRODUTOS
 // ============================================================
-function renderProdutos() {
-  const produtos = DB.get('produtos',[]);
-  const baixo = produtos.filter(p=>p.estoque<=p.minimo);
-  document.getElementById('content').innerHTML = `
-    ${baixo.length?`<div class="estoque-alert"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>${baixo.length} produto${baixo.length!==1?'s':''} com estoque baixo: ${baixo.map(p=>p.nome).join(', ')}</div>`:''}
-    <div class="card">
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Produto</th><th>Categoria</th><th>Preço venda</th><th>Custo</th><th>Estoque</th><th>Mínimo</th><th>Status</th><th></th></tr></thead>
-          <tbody>
-            ${produtos.length ? produtos.map(p=>`<tr>
-              <td style="font-weight:500">${p.nome}</td>
-              <td><div class="badge ${p.categoria==='Bebida'?'blue':'gold'}">${p.categoria}</div></td>
-              <td class="td-gold">${fmt(p.preco)}</td>
-              <td style="color:var(--text2)">${fmt(p.custo||0)}</td>
-              <td style="color:${p.estoque<=p.minimo?'var(--red)':'var(--text)'}"><strong>${p.estoque}</strong></td>
-              <td style="color:var(--text3)">${p.minimo}</td>
-              <td><div class="badge ${p.ativo?'green':'red'}">${p.ativo?'Ativo':'Inativo'}</div></td>
-              <td><div class="row-actions">
-                <div class="row-btn" onclick="modalProduto('${p.id}')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
-                <div class="row-btn danger" onclick="excluir('produtos','${p.id}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div>
-              </div></td>
-            </tr>`).join('') : '<tr><td colspan="8"><div class="empty"><p>Nenhum produto cadastrado</p></div></td></tr>'}
-          </tbody>
-        </table>
-      </div>
-    </div>`;
-}
-
-function modalProduto(id) {
-  const produtos = DB.get('produtos',[]);
-  const p = produtos.find(x=>x.id===id)||{};
-  openModal(id?'Editar Produto':'Novo Produto', `
-    <div class="form-grid">
-      <div class="form-group"><label>Nome</label><input type="text" id="m-nome" value="${p.nome||''}" placeholder="Ex: Pomada Modeladora"/></div>
-      <div class="form-group"><label>Categoria</label>
-        <select id="m-cat"><option${p.categoria==='Bebida'?' selected':''}>Bebida</option><option${p.categoria==='Produto'?' selected':''}>Produto</option></select>
-      </div>
-      <div class="form-grid cols-2">
-        <div class="form-group"><label>Preço venda (R$)</label><input type="number" id="m-preco" value="${p.preco||''}" placeholder="0,00" min="0" step="0.01"/></div>
-        <div class="form-group"><label>Custo (R$)</label><input type="number" id="m-custo" value="${p.custo||''}" placeholder="0,00" min="0" step="0.01"/></div>
-      </div>
-      <div class="form-grid cols-2">
-        <div class="form-group"><label>Estoque atual</label><input type="number" id="m-est" value="${p.estoque||0}" min="0"/></div>
-        <div class="form-group"><label>Estoque mínimo</label><input type="number" id="m-min" value="${p.minimo||2}" min="0"/></div>
-      </div>
-      <div class="form-group"><label>Status</label>
-        <select id="m-ativo"><option value="1"${p.ativo!==false?' selected':''}>Ativo</option><option value="0"${p.ativo===false?' selected':''}>Inativo</option></select>
-      </div>
-    </div>`,
-    [{label:'Cancelar',action:'closeModal()'},{label:'Salvar',primary:true,action:`salvarProduto('${id||''}')`}]
-  );
-}
-
-function salvarProduto(id) {
-  const nome=document.getElementById('m-nome')?.value.trim();
-  const cat=document.getElementById('m-cat')?.value;
-  const preco=parseFloat(document.getElementById('m-preco')?.value||0);
-  const custo=parseFloat(document.getElementById('m-custo')?.value||0);
-  const estoque=parseInt(document.getElementById('m-est')?.value||0);
-  const minimo=parseInt(document.getElementById('m-min')?.value||2);
-  const ativo=document.getElementById('m-ativo')?.value==='1';
-  if (!nome||!preco) return showToast('Preencha nome e preço','error');
+function renderProdutos(){
   const produtos=DB.get('produtos',[]);
-  if (id){const idx=produtos.findIndex(p=>p.id===id);if(idx>=0)produtos[idx]={...produtos[idx],nome,categoria:cat,preco,custo,estoque,minimo,ativo};}
-  else produtos.push({id:DB.id(),nome,categoria:cat,preco,custo,estoque,minimo,ativo});
-  DB.set('produtos',produtos);
-  closeModal();showToast('Produto salvo!','success');renderProdutos();
+  const baixo=produtos.filter(p=>p.estoque<=p.minimo);
+  document.getElementById('content').innerHTML=`${baixo.length?`<div class="estoque-alert"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>${baixo.length} produto${baixo.length!==1?'s':''} com estoque baixo</div>`:''}<div class="card"><div class="table-wrap"><table><thead><tr><th>Produto</th><th>Categoria</th><th>Preço</th><th>Custo</th><th>Comissão</th><th>Estoque</th><th>Status</th><th></th></tr></thead><tbody>${produtos.length?produtos.map(p=>`<tr><td style="font-weight:500">${p.nome}</td><td><div class="badge ${p.categoria==='Bebida'?'blue':'gold'}">${p.categoria}</div></td><td class="td-gold">${fmt(p.preco)}</td><td style="color:var(--text2)">${fmt(p.custo||0)}</td><td><div class="badge purple">${p.comissao||0}%</div></td><td style="color:${p.estoque<=p.minimo?'var(--red)':'var(--text)'}"><strong>${p.estoque}</strong>/<span style="color:var(--text3)">${p.minimo}</span></td><td><div class="badge ${p.ativo?'green':'red'}">${p.ativo?'Ativo':'Inativo'}</div></td><td><div class="row-actions"><div class="row-btn" onclick="modalProduto('${p.id}')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><div class="row-btn danger" onclick="excluir('produtos','${p.id}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div></div></td></tr>`).join(''):'<tr><td colspan="8"><div class="empty"><p>Nenhum produto</p></div></td></tr>'}</tbody></table></div></div>`;
 }
+function modalProduto(id){const p=DB.get('produtos',[]).find(x=>x.id===id)||{};openModal(id?'Editar Produto':'Novo Produto',`<div class="form-grid"><div class="form-group"><label>Nome</label><input type="text" id="m-nome" value="${p.nome||''}" placeholder="Ex: Cerveja Long Neck"/></div><div class="form-group"><label>Categoria</label><select id="m-cat"><option${p.categoria==='Bebida'?' selected':''}>Bebida</option><option${p.categoria==='Produto'?' selected':''}>Produto</option></select></div><div class="form-grid cols-2"><div class="form-group"><label>Preço venda (R$)</label><input type="number" id="m-preco" value="${p.preco||''}" step="0.01"/></div><div class="form-group"><label>Custo (R$)</label><input type="number" id="m-custo" value="${p.custo||''}" step="0.01"/></div></div><div class="form-grid cols-3"><div class="form-group"><label>Estoque</label><input type="number" id="m-est" value="${p.estoque||0}" min="0"/></div><div class="form-group"><label>Mínimo</label><input type="number" id="m-min" value="${p.minimo||2}" min="0"/></div><div class="form-group"><label>Comissão (%)</label><input type="number" id="m-com" value="${p.comissao||10}" min="0" max="100"/></div></div><div class="form-group"><label>Status</label><select id="m-ativo"><option value="1"${p.ativo!==false?' selected':''}>Ativo</option><option value="0"${p.ativo===false?' selected':''}>Inativo</option></select></div></div>`,[{label:'Cancelar',action:'closeModal()'},{label:'Salvar',primary:true,action:`salvarProduto('${id||''}')`}]);}
+function salvarProduto(id){const nome=document.getElementById('m-nome')?.value.trim();const cat=document.getElementById('m-cat')?.value;const preco=parseFloat(document.getElementById('m-preco')?.value||0);const custo=parseFloat(document.getElementById('m-custo')?.value||0);const estoque=parseInt(document.getElementById('m-est')?.value||0);const minimo=parseInt(document.getElementById('m-min')?.value||2);const comissao=parseInt(document.getElementById('m-com')?.value||10);const ativo=document.getElementById('m-ativo')?.value==='1';if(!nome||!preco) return showToast('Preencha nome e preço','error');const ps=DB.get('produtos',[]);if(id){const i=ps.findIndex(p=>p.id===id);if(i>=0) ps[i]={...ps[i],nome,categoria:cat,preco,custo,estoque,minimo,comissao,ativo};}else ps.push({id:DB.id(),nome,categoria:cat,preco,custo,estoque,minimo,comissao,ativo});DB.set('produtos',ps);closeModal();showToast('Salvo!','success');renderProdutos();}
 
 // ============================================================
 // CLIENTES
 // ============================================================
-function renderClientes() {
-  const clientes = DB.get('clientes',[]);
-  document.getElementById('content').innerHTML = `
-    <div class="card">
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Nome</th><th>Telefone</th><th>Visitas</th><th>Total gasto</th><th>Última visita</th><th></th></tr></thead>
-          <tbody>
-            ${clientes.length ? clientes.sort((a,b)=>(b.gasto||0)-(a.gasto||0)).map(c=>`<tr>
-              <td style="font-weight:500">${c.nome}</td>
-              <td style="color:var(--text2)">${c.telefone||'—'}</td>
-              <td><div class="badge gold">${c.visitas||0}x</div></td>
-              <td class="td-gold">${fmt(c.gasto||0)}</td>
-              <td style="color:var(--text2)">${c.ultimaVisita?fmtDate(new Date(c.ultimaVisita).getTime()):'—'}</td>
-              <td><div class="row-actions">
-                <div class="row-btn" onclick="modalCliente('${c.id}')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
-                <div class="row-btn danger" onclick="excluir('clientes','${c.id}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div>
-              </div></td>
-            </tr>`).join('') : '<tr><td colspan="6"><div class="empty"><p>Nenhum cliente cadastrado</p></div></td></tr>'}
-          </tbody>
-        </table>
-      </div>
-    </div>`;
-}
-
-function modalCliente(id) {
+function renderClientes(){
   const clientes=DB.get('clientes',[]);
-  const c=clientes.find(x=>x.id===id)||{};
-  openModal(id?'Editar Cliente':'Novo Cliente',`
-    <div class="form-grid">
-      <div class="form-group"><label>Nome completo</label><input type="text" id="m-nome" value="${c.nome||''}" placeholder="Nome do cliente"/></div>
-      <div class="form-group"><label>Telefone / WhatsApp</label><input type="tel" id="m-tel" value="${c.telefone||''}" placeholder="(47) 99999-9999"/></div>
-      <div class="form-group"><label>E-mail</label><input type="email" id="m-email" value="${c.email||''}" placeholder="email@exemplo.com"/></div>
-      <div class="form-group"><label>Observações</label><textarea id="m-obs">${c.obs||''}</textarea></div>
-    </div>`,
-    [{label:'Cancelar',action:'closeModal()'},{label:'Salvar',primary:true,action:`salvarCliente('${id||''}')`}]
-  );
+  document.getElementById('content').innerHTML=`<div class="card"><div class="table-wrap"><table><thead><tr><th>Nome</th><th>Telefone</th><th>Visitas</th><th>Total gasto</th><th>Última visita</th><th></th></tr></thead><tbody>${clientes.length?clientes.sort((a,b)=>(b.gasto||0)-(a.gasto||0)).map(c=>`<tr><td style="font-weight:500">${c.nome}</td><td style="color:var(--text2)">${c.telefone||'—'}</td><td><div class="badge gold">${c.visitas||0}x</div></td><td class="td-gold">${fmt(c.gasto||0)}</td><td style="color:var(--text2)">${c.ultimaVisita?fmtDate(new Date(c.ultimaVisita).getTime()):'—'}</td><td><div class="row-actions"><div class="row-btn" onclick="modalCliente('${c.id}')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><div class="row-btn danger" onclick="excluir('clientes','${c.id}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div></div></td></tr>`).join(''):'<tr><td colspan="6"><div class="empty"><p>Nenhum cliente</p></div></td></tr>'}</tbody></table></div></div>`;
 }
-
-function salvarCliente(id) {
-  const nome=document.getElementById('m-nome')?.value.trim();
-  const tel=document.getElementById('m-tel')?.value.trim();
-  const email=document.getElementById('m-email')?.value.trim();
-  const obs=document.getElementById('m-obs')?.value.trim();
-  if (!nome) return showToast('Digite o nome','error');
-  const clientes=DB.get('clientes',[]);
-  if (id){const idx=clientes.findIndex(c=>c.id===id);if(idx>=0)clientes[idx]={...clientes[idx],nome,telefone:tel,email,obs};}
-  else clientes.push({id:DB.id(),nome,telefone:tel,email,obs,visitas:0,gasto:0});
-  DB.set('clientes',clientes);
-  closeModal();showToast('Cliente salvo!','success');renderClientes();
-}
+function modalCliente(id){const c=DB.get('clientes',[]).find(x=>x.id===id)||{};openModal(id?'Editar Cliente':'Novo Cliente',`<div class="form-grid"><div class="form-group"><label>Nome completo</label><input type="text" id="m-nome" value="${c.nome||''}" placeholder="Nome do cliente"/></div><div class="form-group"><label>Telefone / WhatsApp</label><input type="tel" id="m-tel" value="${c.telefone||''}" placeholder="(47) 99999-9999"/></div><div class="form-group"><label>E-mail</label><input type="email" id="m-email" value="${c.email||''}" placeholder="email@exemplo.com"/></div><div class="form-group"><label>Observações</label><textarea id="m-obs">${c.obs||''}</textarea></div></div>`,[{label:'Cancelar',action:'closeModal()'},{label:'Salvar',primary:true,action:`salvarCliente('${id||''}')`}]);}
+function salvarCliente(id){const nome=document.getElementById('m-nome')?.value.trim();const tel=document.getElementById('m-tel')?.value.trim();const email=document.getElementById('m-email')?.value.trim();const obs=document.getElementById('m-obs')?.value.trim();if(!nome) return showToast('Digite o nome','error');const cs=DB.get('clientes',[]);if(id){const i=cs.findIndex(c=>c.id===id);if(i>=0) cs[i]={...cs[i],nome,telefone:tel,email,obs};}else cs.push({id:DB.id(),nome,telefone:tel,email,obs,visitas:0,gasto:0});DB.set('clientes',cs);closeModal();showToast('Salvo!','success');renderClientes();}
 
 // ============================================================
-// BARBEIROS
+// FUNCIONÁRIOS
 // ============================================================
-function renderBarbeiros() {
-  const barbeiros=DB.get('barbeiros',[]);
+function renderFuncionarios(){
+  const funcs=DB.get('funcionarios',[]);
   const vendas=DB.get('vendas',[]);
+  const now=new Date();
+  const mesInicio=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-01`;
   document.getElementById('content').innerHTML=`
-    <div class="card">
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Nome</th><th>Cargo</th><th>Atendimentos</th><th>Faturamento</th><th>Status</th><th></th></tr></thead>
-          <tbody>
-            ${barbeiros.length?barbeiros.map(b=>{
-              const bVendas=vendas.filter(v=>v.barbeiro===b.nome);
-              const fat=bVendas.reduce((s,v)=>s+v.total,0);
-              return `<tr>
-                <td style="font-weight:500">${b.nome}</td>
-                <td style="color:var(--text2)">${b.cargo||'—'}</td>
-                <td><div class="badge gold">${bVendas.length}</div></td>
-                <td class="td-gold">${fmt(fat)}</td>
-                <td><div class="badge ${b.ativo?'green':'red'}">${b.ativo?'Ativo':'Inativo'}</div></td>
-                <td><div class="row-actions">
-                  <div class="row-btn" onclick="modalBarbeiro('${b.id}')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
-                  <div class="row-btn danger" onclick="excluir('barbeiros','${b.id}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div>
-                </div></td>
-              </tr>`;}).join('') : '<tr><td colspan="6"><div class="empty"><p>Nenhum barbeiro cadastrado</p></div></td></tr>'}
-          </tbody>
-        </table>
+    <div class="card" style="background:var(--gold-dim);border-color:rgba(201,168,76,.2);margin-bottom:1rem">
+      <div style="font-size:.78rem;color:var(--text2);line-height:1.7">
+        <strong style="color:var(--text)">Regras de comissão</strong><br/>
+        • <strong>Barbeiros</strong>: comissão sobre serviços prestados + produtos vendidos<br/>
+        • <strong>Atendentes / Barmans</strong>: comissão sobre produtos e bebidas vendidos<br/>
+        • Defina a % de cada funcionário no cadastro abaixo
       </div>
-    </div>`;
+    </div>
+    <div class="card"><div class="table-wrap"><table><thead><tr><th>Nome</th><th>Cargo</th><th>Comissão</th><th>Atend. mês</th><th>Fat. mês</th><th>Status</th><th></th></tr></thead><tbody>
+      ${funcs.length?funcs.map(f=>{
+        const fv=vendas.filter(v=>v.funcionario===f.nome&&v.data>=mesInicio);
+        const fat=fv.reduce((s,v)=>s+v.total,0);
+        return`<tr><td style="font-weight:500">${f.nome}</td><td><div class="badge ${f.cargo==='Barbeiro'?'gold':f.cargo==='Atendente'?'blue':'orange'}">${f.cargo}</div></td><td><div class="badge purple">${f.comissao||0}%</div></td><td>${fv.length}</td><td class="td-gold">${fmt(fat)}</td><td><div class="badge ${f.ativo?'green':'red'}">${f.ativo?'Ativo':'Inativo'}</div></td><td><div class="row-actions"><div class="row-btn" onclick="modalFuncionario('${f.id}')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><div class="row-btn danger" onclick="excluir('funcionarios','${f.id}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div></div></td></tr>`;
+      }).join(''):'<tr><td colspan="7"><div class="empty"><p>Nenhum funcionário cadastrado</p></div></td></tr>'}
+    </tbody></table></div></div>`;
 }
-
-function modalBarbeiro(id) {
-  const barbeiros=DB.get('barbeiros',[]);
-  const b=barbeiros.find(x=>x.id===id)||{};
-  openModal(id?'Editar Barbeiro':'Novo Barbeiro',`
-    <div class="form-grid">
-      <div class="form-group"><label>Nome</label><input type="text" id="m-nome" value="${b.nome||''}" placeholder="Nome do profissional"/></div>
-      <div class="form-group"><label>Cargo</label><input type="text" id="m-cargo" value="${b.cargo||''}" placeholder="Ex: Barber Master"/></div>
-      <div class="form-group"><label>Status</label>
-        <select id="m-ativo"><option value="1"${b.ativo!==false?' selected':''}>Ativo</option><option value="0"${b.ativo===false?' selected':''}>Inativo</option></select>
-      </div>
-    </div>`,
-    [{label:'Cancelar',action:'closeModal()'},{label:'Salvar',primary:true,action:`salvarBarbeiro('${id||''}')`}]
-  );
-}
-
-function salvarBarbeiro(id) {
-  const nome=document.getElementById('m-nome')?.value.trim();
-  const cargo=document.getElementById('m-cargo')?.value.trim();
-  const ativo=document.getElementById('m-ativo')?.value==='1';
-  if (!nome) return showToast('Digite o nome','error');
-  const barbeiros=DB.get('barbeiros',[]);
-  if (id){const idx=barbeiros.findIndex(b=>b.id===id);if(idx>=0)barbeiros[idx]={...barbeiros[idx],nome,cargo,ativo};}
-  else barbeiros.push({id:DB.id(),nome,cargo,ativo});
-  DB.set('barbeiros',barbeiros);
-  closeModal();showToast('Barbeiro salvo!','success');renderBarbeiros();
-}
+function modalFuncionario(id){const f=DB.get('funcionarios',[]).find(x=>x.id===id)||{};openModal(id?'Editar Funcionário':'Novo Funcionário',`<div class="form-grid"><div class="form-group"><label>Nome completo</label><input type="text" id="m-nome" value="${f.nome||''}" placeholder="Nome do funcionário"/></div><div class="form-group"><label>Cargo</label><select id="m-cargo"><option${f.cargo==='Barbeiro'?' selected':''}>Barbeiro</option><option${f.cargo==='Atendente'?' selected':''}>Atendente</option><option${f.cargo==='Barman'?' selected':''}>Barman</option><option${f.cargo==='Gerente'?' selected':''}>Gerente</option><option${f.cargo==='Outro'?' selected':''}>Outro</option></select></div><div class="form-group"><label>% de comissão</label><input type="number" id="m-com" value="${f.comissao||10}" min="0" max="100" placeholder="Ex: 40 para barbeiros, 10 para atendentes"/></div><div class="form-group"><label>Status</label><select id="m-ativo"><option value="1"${f.ativo!==false?' selected':''}>Ativo</option><option value="0"${f.ativo===false?' selected':''}>Inativo</option></select></div></div>`,[{label:'Cancelar',action:'closeModal()'},{label:'Salvar',primary:true,action:`salvarFuncionario('${id||''}')`}]);}
+function salvarFuncionario(id){const nome=document.getElementById('m-nome')?.value.trim();const cargo=document.getElementById('m-cargo')?.value;const comissao=parseInt(document.getElementById('m-com')?.value||0);const ativo=document.getElementById('m-ativo')?.value==='1';if(!nome) return showToast('Digite o nome','error');const fs=DB.get('funcionarios',[]);if(id){const i=fs.findIndex(f=>f.id===id);if(i>=0) fs[i]={...fs[i],nome,cargo,comissao,ativo};}else fs.push({id:DB.id(),nome,cargo,comissao,ativo});DB.set('funcionarios',fs);closeModal();showToast('Salvo!','success');renderFuncionarios();}
 
 // ============================================================
 // RELATÓRIOS
 // ============================================================
-function renderRelatorios() {
-  const vendas=DB.get('vendas',[]);
-  const lancs=DB.get('lancamentos',[]);
-  const t=today();
-
-  // Período atual: mês
+function renderRelatorios(){
+  const vendas=DB.get('vendas',[]),lancs=DB.get('lancamentos',[]);
   const now=new Date();
   const mesInicio=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-01`;
-
-  const vendasMes=vendas.filter(v=>v.data>=mesInicio);
-  const receitaMes=vendasMes.reduce((s,v)=>s+v.total,0);
-  const saidasMes=lancs.filter(l=>l.tipo==='saida'&&l.data>=mesInicio).reduce((s,l)=>s+l.valor,0);
-  const lucroMes=receitaMes-saidasMes;
-
-  // Por barbeiro
-  const barbeiros=DB.get('barbeiros',[]);
-  const porBarbeiro=barbeiros.map(b=>{
-    const bv=vendasMes.filter(v=>v.barbeiro===b.nome);
-    return{nome:b.nome,atend:bv.length,fat:bv.reduce((s,v)=>s+v.total,0)};
-  }).sort((a,b)=>b.fat-a.fat);
-
-  // Por forma de pagamento
-  const porPgto={};
-  vendasMes.forEach(v=>{porPgto[v.pgto]=(porPgto[v.pgto]||0)+v.total;});
-
-  // Top serviços mes
-  const contagem={};
-  vendasMes.forEach(v=>v.itens?.forEach(i=>{contagem[i.nome]=(contagem[i.nome]||0)+i.qty;}));
-  const topMes=Object.entries(contagem).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const vm=vendas.filter(v=>v.data>=mesInicio);
+  const rm=vm.reduce((s,v)=>s+v.total,0);
+  const sm=lancs.filter(l=>l.tipo==='saida'&&l.data>=mesInicio).reduce((s,l)=>s+l.valor,0);
+  const comissoesMes=vm.reduce((s,v)=>s+(v.comissaoTotal||0),0);
+  const cnt={};vm.forEach(v=>v.itens?.forEach(i=>{cnt[i.nome]=(cnt[i.nome]||0)+i.qty;}));
+  const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const porPgto={};vm.forEach(v=>{porPgto[v.pgto]=(porPgto[v.pgto]||0)+v.total;});
+  const funcs=DB.get('funcionarios',[]);
+  const porFunc=funcs.map(f=>{const fv=vm.filter(v=>v.funcionario===f.nome);return{nome:f.nome,cargo:f.cargo,atend:fv.length,fat:fv.reduce((s,v)=>s+v.total,0),comissao:fv.reduce((s,v)=>s+(v.comissaoTotal||0),0)};}).sort((a,b)=>b.fat-a.fat);
 
   document.getElementById('content').innerHTML=`
     <div class="stats-row">
-      <div class="stat-card green">
-        <div class="sc-label">Receita do mês</div>
-        <div class="sc-val">${fmt(receitaMes)}</div>
-        <div class="sc-sub">${vendasMes.length} vendas</div>
-      </div>
-      <div class="stat-card red">
-        <div class="sc-label">Despesas do mês</div>
-        <div class="sc-val">${fmt(saidasMes)}</div>
-      </div>
-      <div class="stat-card ${lucroMes>=0?'gold':'red'}">
-        <div class="sc-label">Lucro do mês</div>
-        <div class="sc-val">${fmt(lucroMes)}</div>
-      </div>
-      <div class="stat-card blue">
-        <div class="sc-label">Ticket médio</div>
-        <div class="sc-val">${fmt(vendasMes.length?receitaMes/vendasMes.length:0)}</div>
-      </div>
+      <div class="stat-card green"><div class="sc-label">Receita mês</div><div class="sc-val">${fmt(rm)}</div><div class="sc-sub">${vm.length} vendas</div></div>
+      <div class="stat-card red"><div class="sc-label">Despesas mês</div><div class="sc-val">${fmt(sm)}</div></div>
+      <div class="stat-card gold"><div class="sc-label">Lucro mês</div><div class="sc-val">${fmt(rm-sm-comissoesMes)}</div><div class="sc-sub">após comissões</div></div>
+      <div class="stat-card purple"><div class="sc-label">Comissões mês</div><div class="sc-val">${fmt(comissoesMes)}</div><div class="sc-sub">a pagar</div></div>
     </div>
-
-    <div class="grid-3">
-      <div class="card" style="grid-column:span 2">
-        <div class="card-title">Serviços mais vendidos — mês atual</div>
-        ${topMes.length?topMes.map(([nome,qtd],i)=>`
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:0.55rem 0;border-bottom:1px solid var(--border)">
-            <div style="display:flex;align-items:center;gap:8px">
-              <div style="width:22px;height:22px;border-radius:6px;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:var(--gold);font-weight:700">${i+1}</div>
-              <div style="font-size:0.83rem">${nome}</div>
-            </div>
-            <div class="badge gold">${qtd}x</div>
-          </div>`).join(''):'<div class="empty"><p>Sem dados</p></div>'}
-      </div>
-
-      <div class="card">
-        <div class="card-title">Por forma de pagamento</div>
-        ${Object.entries(porPgto).length?Object.entries(porPgto).sort((a,b)=>b[1]-a[1]).map(([pgto,val])=>`
-          <div style="padding:0.5rem 0;border-bottom:1px solid var(--border)">
-            <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-              <span style="font-size:0.8rem">${pgto}</span>
-              <span style="font-size:0.8rem;color:var(--gold);font-family:'Playfair Display',serif">${fmt(val)}</span>
-            </div>
-            <div style="height:4px;background:var(--border);border-radius:2px">
-              <div style="height:100%;background:var(--gold);border-radius:2px;width:${Math.round((val/receitaMes)*100)}%"></div>
-            </div>
-          </div>`).join(''):'<div class="empty"><p>Sem dados</p></div>'}
-      </div>
+    <div class="grid-2">
+      <div class="card" style="margin:0"><div class="card-title">Mais vendidos — mês</div>${top.length?top.map(([n,q],i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.45rem 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:8px"><div style="width:20px;height:20px;border-radius:5px;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:.62rem;color:var(--gold);font-weight:700">${i+1}</div><div style="font-size:.8rem">${n}</div></div><div class="badge gold">${q}x</div></div>`).join(''):'<div class="empty"><p>Sem dados</p></div>'}</div>
+      <div class="card" style="margin:0"><div class="card-title">Por forma de pagamento</div>${Object.entries(porPgto).length?Object.entries(porPgto).sort((a,b)=>b[1]-a[1]).map(([p,v])=>`<div style="padding:.45rem 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:.8rem">${p}</span><span style="font-size:.8rem;color:var(--gold);font-family:'Playfair Display',serif">${fmt(v)}</span></div><div style="height:3px;background:var(--border);border-radius:2px"><div style="height:100%;background:var(--gold);border-radius:2px;width:${rm?Math.round((v/rm)*100):0}%"></div></div></div>`).join(''):'<div class="empty"><p>Sem dados</p></div>'}</div>
     </div>
-
-    <div class="card">
-      <div class="card-title">Desempenho por barbeiro — mês atual</div>
-      <div class="table-wrap"><table>
-        <thead><tr><th>Barbeiro</th><th>Atendimentos</th><th>Faturamento</th><th>Ticket médio</th></tr></thead>
-        <tbody>
-          ${porBarbeiro.length?porBarbeiro.map(b=>`<tr>
-            <td style="font-weight:500">${b.nome}</td>
-            <td><div class="badge gold">${b.atend}</div></td>
-            <td class="td-gold">${fmt(b.fat)}</td>
-            <td>${fmt(b.atend?b.fat/b.atend:0)}</td>
-          </tr>`).join(''):'<tr><td colspan="4"><div class="empty"><p>Sem dados</p></div></td></tr>'}
-        </tbody>
-      </table></div>
-    </div>`;
+    <div class="card"><div class="card-title">Desempenho por funcionário</div><div class="table-wrap"><table><thead><tr><th>Funcionário</th><th>Cargo</th><th>Atendimentos</th><th>Faturou</th><th>Comissão</th><th>Ticket médio</th></tr></thead><tbody>${porFunc.length?porFunc.map(f=>`<tr><td style="font-weight:500">${f.nome}</td><td><div class="badge ${f.cargo==='Barbeiro'?'gold':'blue'}">${f.cargo}</div></td><td><div class="badge gold">${f.atend}</div></td><td class="td-gold">${fmt(f.fat)}</td><td style="color:var(--purple);font-weight:600">${fmt(f.comissao)}</td><td>${fmt(f.atend?f.fat/f.atend:0)}</td></tr>`).join(''):'<tr><td colspan="6"><div class="empty"><p>Sem dados</p></div></td></tr>'}</tbody></table></div></div>`;
 }
 
 // ============================================================
-// MODAL HELPER
+// MODAL + HELPERS
 // ============================================================
-function openModal(title, body, buttons=[]) {
-  document.getElementById('modal-title').textContent = title;
-  document.getElementById('modal-body').innerHTML = body;
-  document.getElementById('modal-footer').innerHTML = buttons.map(b=>
-    b.primary
-      ? `<button class="btn-save" onclick="${b.action}">${b.label}</button>`
-      : `<button class="btn-cancel" onclick="${b.action}">${b.label}</button>`
-  ).join('');
-  document.getElementById('modal-backdrop').classList.add('open');
-}
+function openModal(title,body,buttons=[]){document.getElementById('modal-title').textContent=title;document.getElementById('modal-body').innerHTML=body;document.getElementById('modal-footer').innerHTML=buttons.map(b=>b.primary?`<button class="btn-save" onclick="${b.action}">${b.label}</button>`:`<button class="btn-cancel" onclick="${b.action}">${b.label}</button>`).join('');document.getElementById('modal-backdrop').classList.add('open');}
+function closeModal(){document.getElementById('modal-backdrop').classList.remove('open');}
+document.getElementById('modal-backdrop').addEventListener('click',e=>{if(e.target===document.getElementById('modal-backdrop')) closeModal();});
+function excluir(col,id){if(!confirm('Excluir este item?')) return;DB.set(col,DB.get(col,[]).filter(i=>i.id!==id));showToast('Excluído','');goPanel(currentPanel);}
+function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(type?' '+type:'');t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3000);}
 
-function closeModal() {
-  document.getElementById('modal-backdrop').classList.remove('open');
-}
-
-document.getElementById('modal-backdrop').addEventListener('click', e => {
-  if (e.target === document.getElementById('modal-backdrop')) closeModal();
-});
-
-// ============================================================
-// GENERIC EXCLUIR
-// ============================================================
-function excluir(col, id) {
-  if (!confirm('Excluir este item?')) return;
-  DB.set(col, DB.get(col,[]).filter(i=>i.id!==id));
-  showToast('Excluído com sucesso','');
-  goPanel(currentPanel);
-}
-
-// ============================================================
-// TOAST
-// ============================================================
-function showToast(msg, type='') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast' + (type?' '+type:'');
-  t.classList.add('show');
-  clearTimeout(t._t);
-  t._t = setTimeout(()=>t.classList.remove('show'), 3000);
-}
-
-// ============================================================
 // INIT
-// ============================================================
 updateSidebar();
 renderDashboard();
 
-// Expor funções globais
-Object.assign(window, {
-  goPanel,modalServico,salvarServico,modalProduto,salvarProduto,
-  modalCliente,salvarCliente,modalBarbeiro,salvarBarbeiro,
-  modalLancamento,salvarLancamento,closeModal,
-  abrirCaixa,fecharCaixa,lancarSaida,
-  addToCart,changeQty,cobrar,setPdvFiltro,setPgto,pdvSearch,
-  excluir,deletarLancamento,filtrarFluxo
-});
+// Expor globais
+Object.assign(window,{goPanel,modalServico,salvarServico,modalProduto,salvarProduto,modalCliente,salvarCliente,modalFuncionario,salvarFuncionario,modalLancamento,salvarLancamento,modalNovaComanda,salvarNovaComanda,modalAdicionarItem,filtrarItensModal,addItemComanda,enviarParaPDV,fecharComanda,excluirComanda,importarComanda,closeModal,abrirCaixa,fecharCaixa,lancarSaida,addToCart,changeQty,cobrar,setPdvFiltro,setPgto,pdvSearch,excluir,deletarLancamento,filtrarFluxo,printRecibo});
 </script>
 </body>
 </html>
