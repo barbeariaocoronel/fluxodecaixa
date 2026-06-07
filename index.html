@@ -668,16 +668,24 @@ function imprimirRecibo(venda){
 }
 
 function _printAndClose(){
-  const html = window._reciboHtmlPendente || '';
+  var html = window._reciboHtmlPendente || '';
   closeModal();
-  const w = window.open('','_blank','width=460,height=620,left=200,top=80');
-  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>Recibo — O Coronel</title><style>*{margin:0;padding:0;box-sizing:border-box}body{background:#fff}@media print{@page{margin:6mm}}</style></head><body>${html}<script>window.onload=function(){window.print();setTimeout(function(){window.close()},800);}<\/script></body></html>`);
+  var w = window.open('','_blank','width=460,height=620,left=200,top=80');
+  var doc='<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>Recibo</title>'+
+    '<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#fff}@media print{@page{margin:6mm}}</style>'+
+    '</head><body>'+html+
+    '<scr'+'ipt>window.onload=function(){window.print();setTimeout(function(){window.close()},800);}</'+'script></body></html>';
+  w.document.write(doc);
   w.document.close();
 }
 
 function printRecibo(html){
-  const w=window.open('','_blank','width=480,height=640');
-  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>Recibo</title><style>*{margin:0;padding:0}body{background:#fff}@media print{@page{margin:8mm}}</style></head><body>${html}<script>window.onload=function(){window.print();}<\/script></body></html>`);
+  var w=window.open('','_blank','width=480,height=640');
+  var doc='<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>Recibo</title>'+
+    '<style>*{margin:0;padding:0}body{background:#fff}@media print{@page{margin:8mm}}</style>'+
+    '</head><body>'+html+
+    '<scr'+'ipt>window.onload=function(){window.print();}</'+'script></body></html>';
+  w.document.write(doc);
   w.document.close();
 }
 
@@ -1075,99 +1083,152 @@ function salvarFuncionario(id){const nome=document.getElementById('m-nome')?.val
 // RELATÓRIOS
 // ============================================================
 function renderRelatorios(){
-  // Pega filtros salvos ou defaults (mês atual)
-  const now=new Date();
-  const mesInicio=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-01`;
-  const hojeStr=today();
-  const fs=window._relFiltros||{
-    dataIni:mesInicio, dataFim:hojeStr, horaIni:'00:00', horaFim:'23:59', funcionario:''
-  };
+  var now=new Date();
+  var mesInicio=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-01';
+  var hojeStr=today();
+  var fs=window._relFiltros||{dataIni:mesInicio,dataFim:hojeStr,horaIni:'00:00',horaFim:'23:59',funcionario:''};
   window._relFiltros=fs;
 
-  const vendas=DB.get('vendas',[]);
-  const lancs=DB.get('lancamentos',[]);
-  const funcs=DB.get('funcionarios',[]);
+  var vendas=DB.get('vendas',[]);
+  var lancs=DB.get('lancamentos',[]);
+  var funcs=DB.get('funcionarios',[]);
 
-  // Filtrar vendas por data+hora
-  const vm=vendas.filter(v=>{
+  var vm=vendas.filter(function(v){
     if(!v.data) return false;
-    const vDate=v.data.substring(0,10);
+    var vDate=v.data.substring(0,10);
     if(vDate<fs.dataIni||vDate>fs.dataFim) return false;
-    // Filtro hora
-    const vHora=v.data.substring(11,16)||'00:00';
+    var vHora=v.data.substring(11,16)||'00:00';
     if(vHora<fs.horaIni||vHora>fs.horaFim) return false;
-    // Filtro funcionário
     if(fs.funcionario&&v.funcionario!==fs.funcionario) return false;
     return true;
   });
 
-  const rm=vm.reduce((s,v)=>s+v.total,0);
-  const sm=lancs.filter(l=>{
+  var rm=vm.reduce(function(s,v){return s+v.total;},0);
+  var sm=lancs.filter(function(l){
     if(l.tipo!=='saida'||!l.data) return false;
-    const d=l.data.substring(0,10);
+    var d=l.data.substring(0,10);
     return d>=fs.dataIni&&d<=fs.dataFim;
-  }).reduce((s,l)=>s+l.valor,0);
-  const comissoesPeriodo=vm.reduce((s,v)=>s+(v.comissaoTotal||0),0);
-  const cnt={};vm.forEach(v=>v.itens?.forEach(i=>{cnt[i.nome]=(cnt[i.nome]||0)+i.qty;}));
-  const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,8);
-  const porPgto={};vm.forEach(v=>{porPgto[v.pgto]=(porPgto[v.pgto]||0)+v.total;});
-  const porFunc=funcs.map(f=>{const fv=vm.filter(v=>v.funcionario===f.nome);return{nome:f.nome,cargo:f.cargo,atend:fv.length,fat:fv.reduce((s,v)=>s+v.total,0),comissao:fv.reduce((s,v)=>s+(v.comissaoTotal||0),0)};}).sort((a,b)=>b.fat-a.fat);
+  }).reduce(function(s,l){return s+l.valor;},0);
+  var comissoes=vm.reduce(function(s,v){return s+(v.comissaoTotal||0);},0);
 
-  document.getElementById('content').innerHTML=`
-    <!-- FILTROS -->
-    <div class="card" style="margin-bottom:1rem">
-      <div style="font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text3);margin-bottom:.75rem">Filtrar período</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr auto;gap:.65rem;align-items:end">
-        <div class="form-group">
-          <label>Data inicial</label>
-          <input type="date" id="f-di" value="${fs.dataIni}"/>
-        </div>
-        <div class="form-group">
-          <label>Data final</label>
-          <input type="date" id="f-df" value="${fs.dataFim}"/>
-        </div>
-        <div class="form-group">
-          <label>Hora inicial</label>
-          <input type="time" id="f-hi" value="${fs.horaIni}"/>
-        </div>
-        <div class="form-group">
-          <label>Hora final</label>
-          <input type="time" id="f-hf" value="${fs.horaFim}"/>
-        </div>
-        <div class="form-group">
-          <label>Funcionário</label>
-          <select id="f-func">
-            <option value="">Todos</option>
-            ${funcs.map(f=>`<option value="${f.nome}"${fs.funcionario===f.nome?' selected':''}>${f.nome}</option>`).join('')}
-          </select>
-        </div>
-        <button class="tb-btn primary" onclick="aplicarFiltroRel()" style="height:36px;margin-bottom:1px">Filtrar</button>
-      </div>
-      <div style="display:flex;gap:.4rem;margin-top:.65rem;flex-wrap:wrap">
-        <button onclick="atalhoRel('hoje')" style="height:26px;padding:0 .7rem;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:.72rem;cursor:pointer">Hoje</button>
-        <button onclick="atalhoRel('ontem')" style="height:26px;padding:0 .7rem;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:.72rem;cursor:pointer">Ontem</button>
-        <button onclick="atalhoRel('semana')" style="height:26px;padding:0 .7rem;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:.72rem;cursor:pointer">Esta semana</button>
-        <button onclick="atalhoRel('mes')" style="height:26px;padding:0 .7rem;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:.72rem;cursor:pointer">Este mês</button>
-        <button onclick="atalhoRel('manha')" style="height:26px;padding:0 .7rem;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:.72rem;cursor:pointer">Manhã (8h–12h)</button>
-        <button onclick="atalhoRel('tarde')" style="height:26px;padding:0 .7rem;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:.72rem;cursor:pointer">Tarde (12h–18h)</button>
-        <button onclick="atalhoRel('noite')" style="height:26px;padding:0 .7rem;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:.72rem;cursor:pointer">Noite (18h–22h)</button>
-      </div>
-    </div>
+  var cnt={};
+  vm.forEach(function(v){if(v.itens) v.itens.forEach(function(i){cnt[i.nome]=(cnt[i.nome]||0)+i.qty;});});
+  var top=Object.entries(cnt).sort(function(a,b){return b[1]-a[1];}).slice(0,8);
 
-    <div class="stats-row">
-      <div class="stat-card green"><div class="sc-label">Receita período</div><div class="sc-val">${fmt(rm)}</div><div class="sc-sub">${vm.length} venda${vm.length!==1?'s':''}</div></div>
-      <div class="stat-card red"><div class="sc-label">Despesas período</div><div class="sc-val">${fmt(sm)}</div></div>
-      <div class="stat-card gold"><div class="sc-label">Lucro período</div><div class="sc-val">${fmt(rm-sm-comissoesPeriodo)}</div><div class="sc-sub">após comissões</div></div>
-      <div class="stat-card purple"><div class="sc-label">Comissões</div><div class="sc-val">${fmt(comissoesPeriodo)}</div><div class="sc-sub">a pagar</div></div>
-    </div>
-    <div class="grid-2">
-      <div class="card" style="margin:0"><div class="card-title">Mais vendidos — período</div>${top.length?top.map(([n,q],i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.45rem 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:8px"><div style="width:20px;height:20px;border-radius:5px;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:.62rem;color:var(--gold);font-weight:700">${i+1}</div><div style="font-size:.8rem">${n}</div></div><div class="badge gold">${q}x</div></div>`).join(''):`<div class="empty"><p>Sem dados no período</p></div>`}</div>
-      <div class="card" style="margin:0"><div class="card-title">Por forma de pagamento</div>${Object.entries(porPgto).length?Object.entries(porPgto).sort((a,b)=>b[1]-a[1]).map(([p,v])=>`<div style="padding:.45rem 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:.8rem">${p}</span><span style="font-size:.8rem;color:var(--gold);font-family:'Playfair Display',serif">${fmt(v)}</span></div><div style="height:3px;background:var(--border);border-radius:2px"><div style="height:100%;background:var(--gold);border-radius:2px;width:${rm?Math.round((v/rm)*100):0}%"></div></div></div>`).join(''):`<div class="empty"><p>Sem dados</p></div>`}</div>
-    </div>
-    <div class="card"><div class="card-title">Desempenho por funcionário — período</div><div class="table-wrap"><table><thead><tr><th>Funcionário</th><th>Cargo</th><th>Atendimentos</th><th>Faturou</th><th>Comissão</th><th>Ticket médio</th></tr></thead><tbody>${porFunc.length?porFunc.map(f=>`<tr><td style="font-weight:500">${f.nome}</td><td><div class="badge ${f.cargo==='Barbeiro'?'gold':'blue'}">${f.cargo}</div></td><td><div class="badge gold">${f.atend}</div></td><td class="td-gold">${fmt(f.fat)}</td><td style="color:var(--purple);font-weight:600">${fmt(f.comissao)}</td><td>${fmt(f.atend?f.fat/f.atend:0)}</td></tr>`).join(''):`<tr><td colspan="6"><div class="empty"><p>Sem dados</p></div></td></tr>`}</tbody></table></div></div>
-  `;
+  var porPgto={};
+  vm.forEach(function(v){porPgto[v.pgto]=(porPgto[v.pgto]||0)+v.total;});
+
+  var porFunc=funcs.map(function(f){
+    var fv=vm.filter(function(v){return v.funcionario===f.nome;});
+    return{nome:f.nome,cargo:f.cargo,atend:fv.length,
+      fat:fv.reduce(function(s,v){return s+v.total;},0),
+      comissao:fv.reduce(function(s,v){return s+(v.comissaoTotal||0);},0)};
+  }).sort(function(a,b){return b.fat-a.fat;});
+
+  // Build options
+  var funcOpts='<option value="">Todos</option>';
+  funcs.forEach(function(f){
+    funcOpts+='<option value="'+f.nome+'"'+(fs.funcionario===f.nome?' selected':'')+'>'+f.nome+'</option>';
+  });
+
+  // Build top
+  var topHtml='';
+  if(top.length){top.forEach(function(e,i){
+    topHtml+='<div style="display:flex;align-items:center;justify-content:space-between;padding:.45rem 0;border-bottom:1px solid var(--border)">'+
+      '<div style="display:flex;align-items:center;gap:8px">'+
+      '<div style="width:20px;height:20px;border-radius:5px;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:.62rem;color:var(--gold);font-weight:700">'+(i+1)+'</div>'+
+      '<div style="font-size:.8rem">'+e[0]+'</div></div>'+
+      '<div class="badge gold">'+e[1]+'x</div></div>';
+  });}else{topHtml='<div class="empty"><p>Sem dados</p></div>';}
+
+  // Build pgto
+  var pgtoHtml='';
+  var pgtoE=Object.entries(porPgto).sort(function(a,b){return b[1]-a[1];});
+  if(pgtoE.length){pgtoE.forEach(function(e){
+    var pct=rm?Math.round((e[1]/rm)*100):0;
+    pgtoHtml+='<div style="padding:.45rem 0;border-bottom:1px solid var(--border)">'+
+      '<div style="display:flex;justify-content:space-between;margin-bottom:4px">'+
+      '<span style="font-size:.8rem">'+e[0]+'</span>'+
+      '<span style="font-size:.8rem;color:var(--gold)">'+fmt(e[1])+'</span></div>'+
+      '<div style="height:3px;background:var(--border);border-radius:2px">'+
+      '<div style="height:100%;background:var(--gold);border-radius:2px;width:'+pct+'%"></div></div></div>';
+  });}else{pgtoHtml='<div class="empty"><p>Sem dados</p></div>';}
+
+  // Build func rows
+  var funcRows='';
+  if(porFunc.length){porFunc.forEach(function(f){
+    funcRows+='<tr><td style="font-weight:500">'+f.nome+'</td>'+
+      '<td><div class="badge '+(f.cargo==='Barbeiro'?'gold':'blue')+'">'+f.cargo+'</div></td>'+
+      '<td><div class="badge gold">'+f.atend+'</div></td>'+
+      '<td class="td-gold">'+fmt(f.fat)+'</td>'+
+      '<td style="color:var(--purple);font-weight:600">'+fmt(f.comissao)+'</td>'+
+      '<td>'+fmt(f.atend?f.fat/f.atend:0)+'</td></tr>';
+  });}else{funcRows='<tr><td colspan="6"><div class="empty"><p>Sem dados</p></div></td></tr>';}
+
+  // Render using DOM to avoid all quote escaping issues
+  var el=document.getElementById('content');
+  el.innerHTML='';
+
+  // Filtros card
+  var fc=document.createElement('div');
+  fc.className='card';
+  fc.style.marginBottom='1rem';
+  fc.innerHTML=
+    '<div style="font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text3);margin-bottom:.75rem">Filtrar período</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr auto;gap:.65rem;align-items:end">'+
+    '<div class="form-group"><label>Data inicial</label><input type="date" id="f-di" value="'+fs.dataIni+'"/></div>'+
+    '<div class="form-group"><label>Data final</label><input type="date" id="f-df" value="'+fs.dataFim+'"/></div>'+
+    '<div class="form-group"><label>Hora inicial</label><input type="time" id="f-hi" value="'+fs.horaIni+'"/></div>'+
+    '<div class="form-group"><label>Hora final</label><input type="time" id="f-hf" value="'+fs.horaFim+'"/></div>'+
+    '<div class="form-group"><label>Funcionário</label><select id="f-func">'+funcOpts+'</select></div>'+
+    '<button class="tb-btn primary" onclick="aplicarFiltroRel()" style="height:36px">Filtrar</button>'+
+    '</div>';
+
+  // Atalhos - added as separate elements to avoid quote issues
+  var atalhos=[
+    {id:'hoje',label:'Hoje'},{id:'ontem',label:'Ontem'},
+    {id:'semana',label:'Esta semana'},{id:'mes',label:'Este mês'},
+    {id:'manha',label:'Manhã 8h-12h'},{id:'tarde',label:'Tarde 12h-18h'},
+    {id:'noite',label:'Noite 18h-22h'}
+  ];
+  var atalhoDiv=document.createElement('div');
+  atalhoDiv.style.cssText='display:flex;gap:.4rem;margin-top:.65rem;flex-wrap:wrap';
+  atalhos.forEach(function(a){
+    var btn=document.createElement('button');
+    btn.textContent=a.label;
+    btn.style.cssText='height:26px;padding:0 .7rem;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:.72rem;cursor:pointer';
+    btn.addEventListener('click',function(){atalhoRel(a.id);});
+    atalhoDiv.appendChild(btn);
+  });
+  fc.appendChild(atalhoDiv);
+  el.appendChild(fc);
+
+  // Stats
+  var statsDiv=document.createElement('div');
+  statsDiv.className='stats-row';
+  statsDiv.innerHTML=
+    '<div class="stat-card green"><div class="sc-label">Receita período</div><div class="sc-val">'+fmt(rm)+'</div><div class="sc-sub">'+vm.length+' venda'+(vm.length!==1?'s':'')+'</div></div>'+
+    '<div class="stat-card red"><div class="sc-label">Despesas período</div><div class="sc-val">'+fmt(sm)+'</div></div>'+
+    '<div class="stat-card gold"><div class="sc-label">Lucro período</div><div class="sc-val">'+fmt(rm-sm-comissoes)+'</div><div class="sc-sub">após comissões</div></div>'+
+    '<div class="stat-card purple"><div class="sc-label">Comissões</div><div class="sc-val">'+fmt(comissoes)+'</div><div class="sc-sub">a pagar</div></div>';
+  el.appendChild(statsDiv);
+
+  // Grid 2
+  var grid=document.createElement('div');
+  grid.className='grid-2';
+  grid.innerHTML=
+    '<div class="card" style="margin:0"><div class="card-title">Mais vendidos</div>'+topHtml+'</div>'+
+    '<div class="card" style="margin:0"><div class="card-title">Por pagamento</div>'+pgtoHtml+'</div>';
+  el.appendChild(grid);
+
+  // Func table
+  var ft=document.createElement('div');
+  ft.className='card';
+  ft.innerHTML='<div class="card-title">Desempenho por funcionário</div>'+
+    '<div class="table-wrap"><table><thead><tr><th>Funcionário</th><th>Cargo</th><th>Atend.</th><th>Faturou</th><th>Comissão</th><th>Ticket</th></tr></thead>'+
+    '<tbody>'+funcRows+'</tbody></table></div>';
+  el.appendChild(ft);
 }
-
 function aplicarFiltroRel(){
   window._relFiltros={
     dataIni:document.getElementById('f-di')?.value||today(),
@@ -1197,7 +1258,15 @@ function atalhoRel(tipo){
 // ============================================================
 // MODAL + HELPERS
 // ============================================================
-function openModal(title,body,buttons=[]){document.getElementById('modal-title').textContent=title;document.getElementById('modal-body').innerHTML=body;document.getElementById('modal-footer').innerHTML=buttons.map(b=>b.primary?`<button class="btn-save" onclick="${b.action}">${b.label}</button>`:`<button class="btn-cancel" onclick="${b.action}">${b.label}</button>`).join('');document.getElementById('modal-backdrop').classList.add('open');}
+function openModal(title,body,buttons=[]){
+  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-body').innerHTML=body;
+  document.getElementById('modal-footer').innerHTML=buttons.map(function(b){
+    if(b.primary) return '<button class="btn-save" onclick="'+b.action+'">'+b.label+'</button>';
+    return '<button class="btn-cancel" onclick="'+b.action+'">'+b.label+'</button>';
+  }).join('');
+  document.getElementById('modal-backdrop').classList.add('open');
+}
 function closeModal(){document.getElementById('modal-backdrop').classList.remove('open');}
 document.getElementById('modal-backdrop').addEventListener('click',e=>{if(e.target===document.getElementById('modal-backdrop')) closeModal();});
 function excluir(col,id){if(!confirm('Excluir este item?')) return;DB.set(col,DB.get(col,[]).filter(i=>i.id!==id));showToast('Excluído','');goPanel(currentPanel);}
@@ -1208,6 +1277,109 @@ updateSidebar();
 renderDashboard();
 
 // Expor globais
+
+// ============================================================
+// RECIBOS
+// ============================================================
+function renderRecibos(){
+  var vendas=DB.get('vendas',[]).sort(function(a,b){return b.ts-a.ts;});
+  var now=new Date();
+  var mesInicio=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-01';
+  var hojeStr=today();
+  var filtro=window._reciboFiltro||'hoje';
+
+  var filtradas=vendas;
+  if(filtro==='hoje') filtradas=vendas.filter(function(v){return v.data&&v.data.startsWith(hojeStr);});
+  else if(filtro==='semana'){
+    var s=new Date();s.setDate(s.getDate()-7);
+    var sk=s.getFullYear()+'-'+String(s.getMonth()+1).padStart(2,'0')+'-'+String(s.getDate()).padStart(2,'0');
+    filtradas=vendas.filter(function(v){return v.data>=sk;});
+  } else if(filtro==='mes'){
+    filtradas=vendas.filter(function(v){return v.data>=mesInicio;});
+  }
+
+  var totalPeriodo=filtradas.reduce(function(s,v){return s+v.total;},0);
+  var el=document.getElementById('content');
+  el.innerHTML='';
+
+  // Period filter buttons
+  var headerDiv=document.createElement('div');
+  headerDiv.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem';
+  var btnsDiv=document.createElement('div');
+  btnsDiv.style.cssText='display:flex;gap:.4rem';
+  var periodos=[{id:'hoje',label:'Hoje'},{id:'semana',label:'7 dias'},{id:'mes',label:'Este mês'},{id:'todos',label:'Todos'}];
+  periodos.forEach(function(p){
+    var btn=document.createElement('button');
+    btn.textContent=p.label;
+    var isActive=filtro===p.id;
+    btn.style.cssText='height:30px;padding:0 .85rem;border-radius:7px;border:1px solid var(--border);font-family:DM Sans,sans-serif;font-size:.75rem;cursor:pointer;background:'+(isActive?'var(--gold)':'var(--bg3)')+';color:'+(isActive?'#0D0D0D':'var(--text2)')+';font-weight:'+(isActive?'600':'400');
+    btn.addEventListener('click',function(){setReciboFiltro(p.id);});
+    btnsDiv.appendChild(btn);
+  });
+  var infoSpan=document.createElement('div');
+  infoSpan.style.cssText='font-size:.82rem;color:var(--text2)';
+  infoSpan.innerHTML=filtradas.length+' recibo'+(filtradas.length!==1?'s':'')+' &middot; <strong style="color:var(--gold)">'+fmt(totalPeriodo)+'</strong>';
+  headerDiv.appendChild(btnsDiv);
+  headerDiv.appendChild(infoSpan);
+  el.appendChild(headerDiv);
+
+  if(!filtradas.length){
+    var empty=document.createElement('div');
+    empty.className='empty';
+    empty.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="36" height="36"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><p>Nenhum recibo no período</p>';
+    el.appendChild(empty);
+    return;
+  }
+
+  filtradas.forEach(function(v){
+    var dt=new Date(v.ts);
+    var dataFmt=String(dt.getDate()).padStart(2,'0')+'/'+String(dt.getMonth()+1).padStart(2,'0')+'/'+dt.getFullYear()+' '+String(dt.getHours()).padStart(2,'0')+':'+String(dt.getMinutes()).padStart(2,'0');
+    var itensStr=(v.itens||[]).map(function(i){return i.nome+(i.qty>1?' ×'+i.qty:'');}).join(' · ');
+
+    var card=document.createElement('div');
+    card.style.cssText='background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin-bottom:.65rem;display:flex;align-items:center;gap:1rem';
+
+    var info=document.createElement('div');
+    info.style.cssText='flex:1';
+    info.innerHTML=
+      '<div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.35rem">'+
+      '<div style="font-weight:600;font-size:.9rem">'+(v.cliente||'<span style="color:var(--text3)">Sem cadastro</span>')+'</div>'+
+      '<div class="badge blue">'+v.pgto+'</div>'+
+      (v.funcionario?'<div style="font-size:.72rem;color:var(--text2)">· '+v.funcionario+'</div>':'')+
+      '</div>'+
+      '<div style="font-size:.75rem;color:var(--text3);margin-bottom:.35rem">'+dataFmt+'</div>'+
+      '<div style="font-size:.78rem;color:var(--text2)">'+itensStr+'</div>';
+
+    var actions=document.createElement('div');
+    actions.style.cssText='text-align:right;flex-shrink:0';
+    var priceEl=document.createElement('div');
+    priceEl.style.cssText="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--gold);margin-bottom:.4rem";
+    priceEl.textContent=fmt(v.total);
+    var printBtn=document.createElement('button');
+    printBtn.textContent='🖨️ Imprimir';
+    printBtn.style.cssText='height:30px;padding:0 .75rem;border-radius:7px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-family:DM Sans,sans-serif;font-size:.72rem;cursor:pointer';
+    printBtn.addEventListener('click',function(){verRecibo(v.id);});
+    actions.appendChild(priceEl);
+    actions.appendChild(printBtn);
+
+    card.appendChild(info);
+    card.appendChild(actions);
+    el.appendChild(card);
+  });
+}
+
+function setReciboFiltro(f){
+  window._reciboFiltro=f;
+  renderRecibos();
+}
+
+function verRecibo(id){
+  var vendas=DB.get('vendas',[]);
+  var v=vendas.find(function(x){return x.id===id;});
+  if(!v) return showToast('Recibo não encontrado','error');
+  imprimirRecibo(v);
+}
+
 Object.assign(window,{goPanel,modalServico,salvarServico,modalProduto,salvarProduto,modalCliente,salvarCliente,modalFuncionario,salvarFuncionario,modalLancamento,salvarLancamento,modalNovaComanda,salvarNovaComanda,modalAdicionarItem,filtrarItensModal,addItemComanda,enviarParaPDV,fecharComanda,excluirComanda,cancelarComanda,importarComanda,closeModal,abrirCaixa,fecharCaixa,lancarSaida,addToCart,changeQty,cobrar,setPdvFiltro,setPgto,pdvSearch,excluir,deletarLancamento,filtrarFluxo,printRecibo,renderRecibos,setReciboFiltro,verRecibo,aplicarFiltroRel,atalhoRel,_printAndClose});
 </script>
 </body>
