@@ -303,6 +303,9 @@ textarea{resize:vertical;min-height:80px}
     <div class="nav-item" id="nav-relatorios" onclick="goPanel('relatorios')">
       <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Relatórios
     </div>
+    <div class="nav-item" id="nav-recibos" onclick="goPanel('recibos')">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>Recibos
+    </div>
   </nav>
   <div class="sidebar-bottom">
     <div class="date-display" id="date-display"></div>
@@ -378,6 +381,7 @@ function seedData(){
   DB.set('vendas',[]);
   DB.set('lancamentos',[]);
   DB.set('comandas',[]);
+  DB.set('comanda_counter',0);
   DB.set('caixa',{aberto:false,saldo:0,abertura:0});
   DB.set('seeded',true);
 }
@@ -406,7 +410,7 @@ function goPanel(name){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   const el=document.getElementById('nav-'+name);
   if(el) el.classList.add('active');
-  const titles={dashboard:'Dashboard',pdv:'PDV — Ponto de Venda',comanda:'Comandas',caixa:'Controle de Caixa',fluxo:'Fluxo de Caixa',comissoes:'Comissões',servicos:'Serviços',produtos:'Produtos & Estoque',clientes:'Clientes',funcionarios:'Funcionários',relatorios:'Relatórios'};
+  const titles={dashboard:'Dashboard',pdv:'PDV — Ponto de Venda',comanda:'Comandas',caixa:'Controle de Caixa',fluxo:'Fluxo de Caixa',comissoes:'Comissões',servicos:'Serviços',produtos:'Produtos & Estoque',clientes:'Clientes',funcionarios:'Funcionários',relatorios:'Relatórios',recibos:'Histórico de Recibos'};
   document.getElementById('topbar-title').textContent=titles[name]||name;
   const actions={
     fluxo:`<button class="tb-btn primary" onclick="modalLancamento()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Lançamento</button>`,
@@ -418,7 +422,7 @@ function goPanel(name){
     relatorios:`<button class="tb-btn" onclick="window.print()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Imprimir</button>`
   };
   document.getElementById('topbar-actions').innerHTML=actions[name]||'';
-  ({dashboard:renderDashboard,pdv:renderPDV,comanda:renderComanda,caixa:renderCaixa,fluxo:renderFluxo,comissoes:renderComissoes,servicos:renderServicos,produtos:renderProdutos,clientes:renderClientes,funcionarios:renderFuncionarios,relatorios:renderRelatorios})[name]?.();
+  ({dashboard:renderDashboard,pdv:renderPDV,comanda:renderComanda,caixa:renderCaixa,fluxo:renderFluxo,comissoes:renderComissoes,servicos:renderServicos,produtos:renderProdutos,clientes:renderClientes,funcionarios:renderFuncionarios,relatorios:renderRelatorios,recibos:renderRecibos})[name]?.();
   updateSidebar();
 }
 
@@ -618,59 +622,62 @@ function cobrar(){
 // ============================================================
 // RECIBO
 // ============================================================
-function imprimirRecibo(venda){
+function gerarHtmlRecibo(venda){
   const now=new Date(venda.ts||Date.now());
   const dataFmt=`${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-  const linhaH='─'.repeat(40);
-  const center=s=>{const pad=Math.max(0,Math.floor((40-s.length)/2));return ' '.repeat(pad)+s;};
+  return `<div style="font-family:'Courier New',monospace;font-size:12px;color:#000;background:#fff;padding:20px;max-width:380px;margin:0 auto;line-height:1.6">
+    <div style="text-align:center;margin-bottom:12px">
+      <div style="font-size:18px;font-weight:900;letter-spacing:3px">O CORONEL</div>
+      <div style="font-size:10px;letter-spacing:2px">IMAGEM MASCULINA &amp; POSICIONAMENTO</div>
+      <div style="font-size:10px;color:#555">Av. Pref. José Juvenal Mafra, 1681 — Navegantes/SC</div>
+      <div style="font-size:10px;color:#555">(47) 99211-5793</div>
+    </div>
+    <div style="border-top:1px dashed #000;border-bottom:1px dashed #000;padding:6px 0;margin:8px 0;font-size:10px;text-align:center">RECIBO DE ATENDIMENTO</div>
+    <div style="font-size:11px;margin-bottom:8px">
+      <div>Data: ${dataFmt}</div>
+      ${venda.cliente?`<div>Cliente: ${venda.cliente}</div>`:''}
+      ${venda.funcionario?`<div>Atendente: ${venda.funcionario}</div>`:''}
+    </div>
+    <div style="border-top:1px dashed #000;padding-top:8px;margin-bottom:8px">
+      <div style="font-size:10px;font-weight:700;margin-bottom:4px">ITENS</div>
+      ${(venda.itens||[]).map(i=>`<div style="display:flex;justify-content:space-between;font-size:11px;padding:2px 0"><span>${i.nome}${i.qty>1?` x${i.qty}`:''}</span><span>${fmt(i.preco*i.qty)}</span></div>`).join('')}
+    </div>
+    <div style="border-top:1px dashed #000;padding-top:8px">
+      <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:900"><span>TOTAL</span><span>${fmt(venda.total)}</span></div>
+      <div style="font-size:11px;margin-top:4px">Pagamento: ${venda.pgto}</div>
+    </div>
+    <div style="text-align:center;margin-top:12px;font-size:10px;border-top:1px dashed #000;padding-top:8px">
+      <div>Obrigado pela preferência!</div>
+      <div style="margin-top:4px">volte sempre 💈</div>
+    </div>
+  </div>`;
+}
 
-  const html=`
-    <div style="font-family:'Courier New',monospace;font-size:12px;color:#000;background:#fff;padding:20px;max-width:380px;margin:0 auto;line-height:1.6">
-      <div style="text-align:center;margin-bottom:12px">
-        <div style="font-size:18px;font-weight:900;letter-spacing:3px">O CORONEL</div>
-        <div style="font-size:10px;letter-spacing:2px">IMAGEM MASCULINA & POSICIONAMENTO</div>
-        <div style="font-size:10px;color:#555">Av. Pref. José Juvenal Mafra, 1681 — Navegantes/SC</div>
-        <div style="font-size:10px;color:#555">(47) 99211-5793</div>
-      </div>
-      <div style="border-top:1px dashed #000;border-bottom:1px dashed #000;padding:6px 0;margin:8px 0;font-size:10px;text-align:center">
-        RECIBO DE ATENDIMENTO
-      </div>
-      <div style="font-size:11px;margin-bottom:8px">
-        <div>Data: ${dataFmt}</div>
-        ${venda.cliente?`<div>Cliente: ${venda.cliente}</div>`:''}
-        ${venda.funcionario?`<div>Atendente: ${venda.funcionario}</div>`:''}
-      </div>
-      <div style="border-top:1px dashed #000;padding-top:8px;margin-bottom:8px">
-        <div style="font-size:10px;font-weight:700;margin-bottom:4px">ITENS</div>
-        ${venda.itens?.map(i=>`
-          <div style="display:flex;justify-content:space-between;font-size:11px;padding:2px 0">
-            <span>${i.nome}${i.qty>1?` x${i.qty}`:''}</span>
-            <span>${fmt(i.preco*i.qty)}</span>
-          </div>`).join('')||''}
-      </div>
-      <div style="border-top:1px dashed #000;padding-top:8px">
-        <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:900">
-          <span>TOTAL</span><span>${fmt(venda.total)}</span>
-        </div>
-        <div style="font-size:11px;margin-top:4px">Pagamento: ${venda.pgto}</div>
-      </div>
-      <div style="text-align:center;margin-top:12px;font-size:10px;border-top:1px dashed #000;padding-top:8px">
-        <div>Obrigado pela preferência!</div>
-        <div style="margin-top:4px">volte sempre 💈</div>
-      </div>
-    </div>`;
-
-  // Modal de recibo com opção de imprimir
-  openModal('Recibo',`
-    <div id="recibo-preview" style="background:#f9f9f9;border-radius:8px;padding:1rem;max-height:60vh;overflow-y:auto">${html}</div>
-    <div style="margin-top:1rem;font-size:0.8rem;color:var(--text2);text-align:center">Este recibo pode ser impresso para o cliente e para arquivamento</div>`,
-    [{label:'Fechar',action:'closeModal()'},{label:'🖨️ Imprimir',primary:true,action:`printRecibo(\`${html.replace(/`/g,"'")}\`)`}]
+function imprimirRecibo(venda){
+  const html = gerarHtmlRecibo(venda);
+  // Mostra modal com preview e botão OK que imprime e fecha
+  openModal('Recibo',
+    `<div style="background:#f5f5f5;border-radius:8px;padding:1rem;max-height:52vh;overflow-y:auto;border:1px solid #ddd">${html}</div>`,
+    [
+      {label:'Fechar',action:'closeModal()'},
+      {label:'✓ OK — Imprimir',primary:true,action:`_printAndClose()`}
+    ]
   );
+  // Guarda html para impressão
+  window._reciboHtmlPendente = html;
+}
+
+function _printAndClose(){
+  const html = window._reciboHtmlPendente || '';
+  closeModal();
+  const w = window.open('','_blank','width=460,height=620,left=200,top=80');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>Recibo — O Coronel</title><style>*{margin:0;padding:0;box-sizing:border-box}body{background:#fff}@media print{@page{margin:6mm}}</style></head><body>${html}<script>window.onload=function(){window.print();setTimeout(function(){window.close()},800);}<\/script></body></html>`);
+  w.document.close();
 }
 
 function printRecibo(html){
-  const w=window.open('','_blank','width=420,height=600');
-  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>Recibo — O Coronel</title><style>*{margin:0;padding:0;box-sizing:border-box}body{background:#fff}@media print{@page{margin:10mm}}</style></head><body>${html}<script>window.onload=function(){window.print();setTimeout(()=>window.close(),500)}<\/script></body></html>`);
+  const w=window.open('','_blank','width=480,height=640');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>Recibo</title><style>*{margin:0;padding:0}body{background:#fff}@media print{@page{margin:8mm}}</style></head><body>${html}<script>window.onload=function(){window.print();}<\/script></body></html>`);
   w.document.close();
 }
 
@@ -720,6 +727,7 @@ function comandaCard(c){
   return`<div class="comanda-card aberta">
     <div class="cc-header">
       <div>
+        <div style="font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-d);margin-bottom:2px">Comanda #${c.numero||'—'}</div>
         <div class="cc-nome">${c.cliente}</div>
         <div class="cc-meta">⏱ ${tempo} · ${c.atendente||'—'}</div>
       </div>
@@ -733,7 +741,7 @@ function comandaCard(c){
       <button class="cc-btn" onclick="modalAdicionarItem('${c.id}')">+ Item</button>
       <button class="cc-btn" onclick="enviarParaPDV('${c.id}')">PDV</button>
       <button class="cc-btn primary" onclick="fecharComanda('${c.id}')">Fechar</button>
-      <button class="cc-btn danger" onclick="excluirComanda('${c.id}')">✕</button>
+      <button class="cc-btn danger" onclick="cancelarComanda('${c.id}')">Cancelar</button>
     </div>
   </div>`;
 }
@@ -741,16 +749,20 @@ function comandaCard(c){
 function modalNovaComanda(){
   const clientes=DB.get('clientes',[]);
   const funcionarios=DB.get('funcionarios',[]).filter(f=>f.ativo);
+  const counter=(DB.get('comanda_counter',0)||0)+1;
   openModal('Nova Comanda',`
     <div class="form-grid">
       <div class="form-group">
-        <label>Nome do cliente</label>
-        <input type="text" id="m-nome" placeholder="Digite ou selecione" list="lista-clientes"/>
+        <label>Nome do cliente <span style="color:var(--text3);font-size:.68rem;text-transform:none">(opcional — deixe vazio para mesa/comanda avulsa)</span></label>
+        <input type="text" id="m-nome" placeholder="Ex: João Silva (ou deixe vazio)" list="lista-clientes"/>
         <datalist id="lista-clientes">${clientes.map(c=>`<option value="${c.nome}"/>`).join('')}</datalist>
       </div>
       <div class="form-group">
         <label>Atendente</label>
         <select id="m-func"><option value="">Não informado</option>${funcionarios.map(f=>`<option value="${f.nome}">${f.nome}</option>`).join('')}</select>
+      </div>
+      <div style="background:var(--bg3);border-radius:8px;padding:.65rem 1rem;font-size:.78rem;color:var(--text2)">
+        Será criada como <strong style="color:var(--gold)">Comanda #${counter}</strong>
       </div>
     </div>`,
     [{label:'Cancelar',action:'closeModal()'},{label:'Abrir comanda',primary:true,action:'salvarNovaComanda()'}]
@@ -758,18 +770,22 @@ function modalNovaComanda(){
 }
 
 function salvarNovaComanda(){
-  const nome=document.getElementById('m-nome')?.value.trim();
+  const nome=(document.getElementById('m-nome')?.value||'').trim();
   const atendente=document.getElementById('m-func')?.value||'';
-  if(!nome) return showToast('Digite o nome do cliente','error');
-  // Cadastrar cliente se não existir
-  const clientes=DB.get('clientes',[]);
-  if(!clientes.find(c=>c.nome===nome)){clientes.push({id:DB.id(),nome,visitas:0,gasto:0});DB.set('clientes',clientes);}
+  // Cadastrar cliente se informado e não existir
+  if(nome){
+    const clientes=DB.get('clientes',[]);
+    if(!clientes.find(c=>c.nome===nome)){clientes.push({id:DB.id(),nome,visitas:0,gasto:0});DB.set('clientes',clientes);}
+    const comandas=DB.get('comandas',[]);
+    if(comandas.find(c=>c.cliente===nome&&c.status==='aberta')){return showToast(`${nome} já tem comanda aberta!`,'error');}
+  }
+  const counter=(DB.get('comanda_counter',0)||0)+1;
+  DB.set('comanda_counter',counter);
   const comandas=DB.get('comandas',[]);
-  // Verificar se já tem comanda aberta para este cliente
-  if(comandas.find(c=>c.cliente===nome&&c.status==='aberta')){return showToast(`${nome} já tem comanda aberta!`,'error');}
-  comandas.push({id:DB.id(),cliente:nome,atendente,itens:[],status:'aberta',criadaEm:Date.now()});
+  const label=nome||`Mesa/Comanda #${counter}`;
+  comandas.push({id:DB.id(),numero:counter,cliente:label,clienteReal:nome||'',atendente,itens:[],status:'aberta',criadaEm:Date.now()});
   DB.set('comandas',comandas);
-  closeModal();showToast(`Comanda de ${nome} aberta!`,'success');
+  closeModal();showToast(`Comanda #${counter}${nome?' — '+nome:''} aberta!`,'success');
   renderComanda();updateSidebar();
 }
 
@@ -848,11 +864,23 @@ function fecharComanda(id){
   );
 }
 
-function excluirComanda(id){
-  if(!confirm('Excluir esta comanda?')) return;
-  DB.set('comandas',DB.get('comandas',[]).filter(c=>c.id!==id));
-  showToast('Comanda excluída','');
+function cancelarComanda(id){
+  const comandas=DB.get('comandas',[]);
+  const c=comandas.find(x=>x.id===id);
+  if(!c) return;
+  const label=`Comanda #${c.numero||'?'} — ${c.cliente}`;
+  if(!confirm(`Cancelar ${label}?
+
+Os itens serão descartados e a comanda fechada.`)) return;
+  c.status='cancelada';
+  c.canceladaEm=Date.now();
+  DB.set('comandas',comandas);
+  showToast(`${label} cancelada`,'');
   renderComanda();updateSidebar();
+}
+
+function excluirComanda(id){
+  cancelarComanda(id);
 }
 
 // ============================================================
@@ -1047,32 +1075,124 @@ function salvarFuncionario(id){const nome=document.getElementById('m-nome')?.val
 // RELATÓRIOS
 // ============================================================
 function renderRelatorios(){
-  const vendas=DB.get('vendas',[]),lancs=DB.get('lancamentos',[]);
+  // Pega filtros salvos ou defaults (mês atual)
   const now=new Date();
   const mesInicio=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-01`;
-  const vm=vendas.filter(v=>v.data>=mesInicio);
+  const hojeStr=today();
+  const fs=window._relFiltros||{
+    dataIni:mesInicio, dataFim:hojeStr, horaIni:'00:00', horaFim:'23:59', funcionario:''
+  };
+  window._relFiltros=fs;
+
+  const vendas=DB.get('vendas',[]);
+  const lancs=DB.get('lancamentos',[]);
+  const funcs=DB.get('funcionarios',[]);
+
+  // Filtrar vendas por data+hora
+  const vm=vendas.filter(v=>{
+    if(!v.data) return false;
+    const vDate=v.data.substring(0,10);
+    if(vDate<fs.dataIni||vDate>fs.dataFim) return false;
+    // Filtro hora
+    const vHora=v.data.substring(11,16)||'00:00';
+    if(vHora<fs.horaIni||vHora>fs.horaFim) return false;
+    // Filtro funcionário
+    if(fs.funcionario&&v.funcionario!==fs.funcionario) return false;
+    return true;
+  });
+
   const rm=vm.reduce((s,v)=>s+v.total,0);
-  const sm=lancs.filter(l=>l.tipo==='saida'&&l.data>=mesInicio).reduce((s,l)=>s+l.valor,0);
-  const comissoesMes=vm.reduce((s,v)=>s+(v.comissaoTotal||0),0);
+  const sm=lancs.filter(l=>{
+    if(l.tipo!=='saida'||!l.data) return false;
+    const d=l.data.substring(0,10);
+    return d>=fs.dataIni&&d<=fs.dataFim;
+  }).reduce((s,l)=>s+l.valor,0);
+  const comissoesPeriodo=vm.reduce((s,v)=>s+(v.comissaoTotal||0),0);
   const cnt={};vm.forEach(v=>v.itens?.forEach(i=>{cnt[i.nome]=(cnt[i.nome]||0)+i.qty;}));
   const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,8);
   const porPgto={};vm.forEach(v=>{porPgto[v.pgto]=(porPgto[v.pgto]||0)+v.total;});
-  const funcs=DB.get('funcionarios',[]);
   const porFunc=funcs.map(f=>{const fv=vm.filter(v=>v.funcionario===f.nome);return{nome:f.nome,cargo:f.cargo,atend:fv.length,fat:fv.reduce((s,v)=>s+v.total,0),comissao:fv.reduce((s,v)=>s+(v.comissaoTotal||0),0)};}).sort((a,b)=>b.fat-a.fat);
 
   document.getElementById('content').innerHTML=`
+    <!-- FILTROS -->
+    <div class="card" style="margin-bottom:1rem">
+      <div style="font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text3);margin-bottom:.75rem">Filtrar período</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr auto;gap:.65rem;align-items:end">
+        <div class="form-group">
+          <label>Data inicial</label>
+          <input type="date" id="f-di" value="${fs.dataIni}"/>
+        </div>
+        <div class="form-group">
+          <label>Data final</label>
+          <input type="date" id="f-df" value="${fs.dataFim}"/>
+        </div>
+        <div class="form-group">
+          <label>Hora inicial</label>
+          <input type="time" id="f-hi" value="${fs.horaIni}"/>
+        </div>
+        <div class="form-group">
+          <label>Hora final</label>
+          <input type="time" id="f-hf" value="${fs.horaFim}"/>
+        </div>
+        <div class="form-group">
+          <label>Funcionário</label>
+          <select id="f-func">
+            <option value="">Todos</option>
+            ${funcs.map(f=>`<option value="${f.nome}"${fs.funcionario===f.nome?' selected':''}>${f.nome}</option>`).join('')}
+          </select>
+        </div>
+        <button class="tb-btn primary" onclick="aplicarFiltroRel()" style="height:36px;margin-bottom:1px">Filtrar</button>
+      </div>
+      <div style="display:flex;gap:.4rem;margin-top:.65rem;flex-wrap:wrap">
+        <button onclick="atalhoRel('hoje')" style="height:26px;padding:0 .7rem;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:.72rem;cursor:pointer">Hoje</button>
+        <button onclick="atalhoRel('ontem')" style="height:26px;padding:0 .7rem;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:.72rem;cursor:pointer">Ontem</button>
+        <button onclick="atalhoRel('semana')" style="height:26px;padding:0 .7rem;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:.72rem;cursor:pointer">Esta semana</button>
+        <button onclick="atalhoRel('mes')" style="height:26px;padding:0 .7rem;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:.72rem;cursor:pointer">Este mês</button>
+        <button onclick="atalhoRel('manha')" style="height:26px;padding:0 .7rem;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:.72rem;cursor:pointer">Manhã (8h–12h)</button>
+        <button onclick="atalhoRel('tarde')" style="height:26px;padding:0 .7rem;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:.72rem;cursor:pointer">Tarde (12h–18h)</button>
+        <button onclick="atalhoRel('noite')" style="height:26px;padding:0 .7rem;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:.72rem;cursor:pointer">Noite (18h–22h)</button>
+      </div>
+    </div>
+
     <div class="stats-row">
-      <div class="stat-card green"><div class="sc-label">Receita mês</div><div class="sc-val">${fmt(rm)}</div><div class="sc-sub">${vm.length} vendas</div></div>
-      <div class="stat-card red"><div class="sc-label">Despesas mês</div><div class="sc-val">${fmt(sm)}</div></div>
-      <div class="stat-card gold"><div class="sc-label">Lucro mês</div><div class="sc-val">${fmt(rm-sm-comissoesMes)}</div><div class="sc-sub">após comissões</div></div>
-      <div class="stat-card purple"><div class="sc-label">Comissões mês</div><div class="sc-val">${fmt(comissoesMes)}</div><div class="sc-sub">a pagar</div></div>
+      <div class="stat-card green"><div class="sc-label">Receita período</div><div class="sc-val">${fmt(rm)}</div><div class="sc-sub">${vm.length} venda${vm.length!==1?'s':''}</div></div>
+      <div class="stat-card red"><div class="sc-label">Despesas período</div><div class="sc-val">${fmt(sm)}</div></div>
+      <div class="stat-card gold"><div class="sc-label">Lucro período</div><div class="sc-val">${fmt(rm-sm-comissoesPeriodo)}</div><div class="sc-sub">após comissões</div></div>
+      <div class="stat-card purple"><div class="sc-label">Comissões</div><div class="sc-val">${fmt(comissoesPeriodo)}</div><div class="sc-sub">a pagar</div></div>
     </div>
     <div class="grid-2">
-      <div class="card" style="margin:0"><div class="card-title">Mais vendidos — mês</div>${top.length?top.map(([n,q],i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.45rem 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:8px"><div style="width:20px;height:20px;border-radius:5px;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:.62rem;color:var(--gold);font-weight:700">${i+1}</div><div style="font-size:.8rem">${n}</div></div><div class="badge gold">${q}x</div></div>`).join(''):'<div class="empty"><p>Sem dados</p></div>'}</div>
-      <div class="card" style="margin:0"><div class="card-title">Por forma de pagamento</div>${Object.entries(porPgto).length?Object.entries(porPgto).sort((a,b)=>b[1]-a[1]).map(([p,v])=>`<div style="padding:.45rem 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:.8rem">${p}</span><span style="font-size:.8rem;color:var(--gold);font-family:'Playfair Display',serif">${fmt(v)}</span></div><div style="height:3px;background:var(--border);border-radius:2px"><div style="height:100%;background:var(--gold);border-radius:2px;width:${rm?Math.round((v/rm)*100):0}%"></div></div></div>`).join(''):'<div class="empty"><p>Sem dados</p></div>'}</div>
+      <div class="card" style="margin:0"><div class="card-title">Mais vendidos — período</div>${top.length?top.map(([n,q],i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.45rem 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:8px"><div style="width:20px;height:20px;border-radius:5px;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:.62rem;color:var(--gold);font-weight:700">${i+1}</div><div style="font-size:.8rem">${n}</div></div><div class="badge gold">${q}x</div></div>`).join(''):`<div class="empty"><p>Sem dados no período</p></div>`}</div>
+      <div class="card" style="margin:0"><div class="card-title">Por forma de pagamento</div>${Object.entries(porPgto).length?Object.entries(porPgto).sort((a,b)=>b[1]-a[1]).map(([p,v])=>`<div style="padding:.45rem 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:.8rem">${p}</span><span style="font-size:.8rem;color:var(--gold);font-family:'Playfair Display',serif">${fmt(v)}</span></div><div style="height:3px;background:var(--border);border-radius:2px"><div style="height:100%;background:var(--gold);border-radius:2px;width:${rm?Math.round((v/rm)*100):0}%"></div></div></div>`).join(''):`<div class="empty"><p>Sem dados</p></div>`}</div>
     </div>
-    <div class="card"><div class="card-title">Desempenho por funcionário</div><div class="table-wrap"><table><thead><tr><th>Funcionário</th><th>Cargo</th><th>Atendimentos</th><th>Faturou</th><th>Comissão</th><th>Ticket médio</th></tr></thead><tbody>${porFunc.length?porFunc.map(f=>`<tr><td style="font-weight:500">${f.nome}</td><td><div class="badge ${f.cargo==='Barbeiro'?'gold':'blue'}">${f.cargo}</div></td><td><div class="badge gold">${f.atend}</div></td><td class="td-gold">${fmt(f.fat)}</td><td style="color:var(--purple);font-weight:600">${fmt(f.comissao)}</td><td>${fmt(f.atend?f.fat/f.atend:0)}</td></tr>`).join(''):'<tr><td colspan="6"><div class="empty"><p>Sem dados</p></div></td></tr>'}</tbody></table></div></div>`;
+    <div class="card"><div class="card-title">Desempenho por funcionário — período</div><div class="table-wrap"><table><thead><tr><th>Funcionário</th><th>Cargo</th><th>Atendimentos</th><th>Faturou</th><th>Comissão</th><th>Ticket médio</th></tr></thead><tbody>${porFunc.length?porFunc.map(f=>`<tr><td style="font-weight:500">${f.nome}</td><td><div class="badge ${f.cargo==='Barbeiro'?'gold':'blue'}">${f.cargo}</div></td><td><div class="badge gold">${f.atend}</div></td><td class="td-gold">${fmt(f.fat)}</td><td style="color:var(--purple);font-weight:600">${fmt(f.comissao)}</td><td>${fmt(f.atend?f.fat/f.atend:0)}</td></tr>`).join(''):`<tr><td colspan="6"><div class="empty"><p>Sem dados</p></div></td></tr>`}</tbody></table></div></div>
+  `;
 }
+
+function aplicarFiltroRel(){
+  window._relFiltros={
+    dataIni:document.getElementById('f-di')?.value||today(),
+    dataFim:document.getElementById('f-df')?.value||today(),
+    horaIni:document.getElementById('f-hi')?.value||'00:00',
+    horaFim:document.getElementById('f-hf')?.value||'23:59',
+    funcionario:document.getElementById('f-func')?.value||''
+  };
+  renderRelatorios();
+}
+
+function atalhoRel(tipo){
+  const now=new Date();
+  const h=today();
+  let dataIni=h,dataFim=h,horaIni='00:00',horaFim='23:59';
+  if(tipo==='ontem'){const d=new Date();d.setDate(d.getDate()-1);const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;dataIni=k;dataFim=k;}
+  else if(tipo==='semana'){const d=new Date();d.setDate(d.getDate()-d.getDay());dataIni=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+  else if(tipo==='mes'){dataIni=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-01`;}
+  else if(tipo==='manha'){horaIni='08:00';horaFim='11:59';}
+  else if(tipo==='tarde'){horaIni='12:00';horaFim='17:59';}
+  else if(tipo==='noite'){horaIni='18:00';horaFim='22:00';}
+  window._relFiltros={...window._relFiltros,dataIni,dataFim,horaIni,horaFim};
+  renderRelatorios();
+}
+
 
 // ============================================================
 // MODAL + HELPERS
@@ -1088,7 +1208,7 @@ updateSidebar();
 renderDashboard();
 
 // Expor globais
-Object.assign(window,{goPanel,modalServico,salvarServico,modalProduto,salvarProduto,modalCliente,salvarCliente,modalFuncionario,salvarFuncionario,modalLancamento,salvarLancamento,modalNovaComanda,salvarNovaComanda,modalAdicionarItem,filtrarItensModal,addItemComanda,enviarParaPDV,fecharComanda,excluirComanda,importarComanda,closeModal,abrirCaixa,fecharCaixa,lancarSaida,addToCart,changeQty,cobrar,setPdvFiltro,setPgto,pdvSearch,excluir,deletarLancamento,filtrarFluxo,printRecibo});
+Object.assign(window,{goPanel,modalServico,salvarServico,modalProduto,salvarProduto,modalCliente,salvarCliente,modalFuncionario,salvarFuncionario,modalLancamento,salvarLancamento,modalNovaComanda,salvarNovaComanda,modalAdicionarItem,filtrarItensModal,addItemComanda,enviarParaPDV,fecharComanda,excluirComanda,cancelarComanda,importarComanda,closeModal,abrirCaixa,fecharCaixa,lancarSaida,addToCart,changeQty,cobrar,setPdvFiltro,setPgto,pdvSearch,excluir,deletarLancamento,filtrarFluxo,printRecibo,renderRecibos,setReciboFiltro,verRecibo,aplicarFiltroRel,atalhoRel,_printAndClose});
 </script>
 </body>
 </html>
